@@ -1,0 +1,21 @@
+[submodule "bibfile"]
+	path = vendor/bibfile
+	url = git@github.com:ivotron/bibfile.git
+[submodule "bibtools"]
+	path = vendor/bibtools
+	url = git@github.com:ivotron/bibtools.git
+[submodule "pandoc-templates"]
+	path = vendor/pandoc-templates
+	url = git@github.com:ivotron/pandoc-templates
+[submodule "latex-files"]
+	path = vendor/latex-files
+	url = git@github.com:ivotron/latex-files
+[submodule "vendor/docker-pandoc"]
+	path = vendor/docker-pandoc
+	url = git@github.com:ivotron/docker-pandoc
+[submodule "vendor/pandoc-attributes"]
+	path = vendor/pandoc-attributes
+	url = git@github.com:aaren/pandoc-attributes.git
+[submodule "vendor/pandoc-fignos"]
+	path = vendor/pandoc-fignos
+	url = git@github.com:tomduck/pandoc-fignos.git
