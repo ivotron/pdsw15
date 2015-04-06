@@ -16,6 +16,3 @@
 [submodule "vendor/pandoc-attributes"]
 	path = vendor/pandoc-attributes
 	url = git@github.com:aaren/pandoc-attributes.git
-[submodule "vendor/pandoc-fignos"]
-	path = vendor/pandoc-fignos
-	url = git@github.com:tomduck/pandoc-fignos.git

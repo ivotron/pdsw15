@@ -1,18 +1,24 @@
 ---
-title: "Tackling the Reproducibility Problem with Declarative Experiment Specifications"
+title: "Tackling the Reproducibility Problem in Systems Research with Declarative Experiment Specifications"
 author:
-  - name: "Ivo Jimenez \\and Carlos Maltzahn"
+  - name: "Ivo Jimenez and Carlos Maltzahn"
     affiliation: "University of California Santa Cruz"
     email: "`{ivo,carlosm}@cs.ucsc.edu`"
+  - name: "Jay Lofstead"
+    affiliation: "Sandia National Laboratories"
+    email: "`gflofst@sandia.gov`"
+  - name: "Adam Moody and Kathryn Mohror"
+    affiliation: "Lawrence Livermore National Laboratories"
+    email: "`{moody11,kathryn}@llnl.gov`"
 abstract: |
   Evaluating experimental results in the field of computer systems is 
   a challenging task, mainly due to the many changes in software and 
   hardware that computational environments go through. In this 
-  position paper, we introduce a format for specifying. A subset of 
-  this is the. We present several use cases in the area of storage 
-  systems to illustrate the usefulness of this approach. We also 
-  discuss its limitations and potential benefits of using this 
-  approach in other areas of experimental systems research.
+  position paper, we introduce a declarative format for specifying the 
+  goals and outcomes of an experiment. We present a use case in the 
+  area of storage systems to illustrate the usefulness of this 
+  approach. We also discuss limitations and potential benefits of 
+  using this approach in other areas of experimental systems research.
 tags:
   - vision-paper
   - socc15
@@ -22,39 +28,238 @@ classoption:
   - 10pt
   - reprint
 numbersections: true
-substitute-hyperref: true
 documentclass: sigplanconf
+substitute-hyperref: true
 sigplanconf: true
 links-as-notes: true
 csl: "ieee.csl"
 bibliography: "citations.bib"
-fontfamily: times
 usedefaultspacing: yes
 keywords:
-  - foo
-  - bar
+  - reproducibility
 ---
 
 # Introduction
 
-If you take the observation as the basis for validation, the wiggle 
-room for reproducibility is very limited. We have to look at 
-experiment goals instead.
+A key component of the scientific method is the ability to revisit and 
+replicate previous experiments. Registering detailed information about 
+how an experiment was carried out allows scientists to interpret and 
+understand results, as well as verify that the experiment was 
+performed according to acceptable procedures. Additionally, 
+reproducibility plays a major role in education since the amount of 
+information that a student has to digest increases as the pace of 
+scientific discovery accelerates. By having the ability to repeat 
+experiments, a student can learn by looking at provenance information, 
+re-evaluate the questions that the original experiment answered and 
+thus "stand on the shoulder of giants".
 
-What are the components of an experiment?
+In applied computer science an experiment is carried out in its 
+entirety on a computer. Repeating an experiment doesn't require a 
+scientist to rewrite a program, rather it entails obtaining the 
+original program and executing it (possibly in a distinct 
+environment). Thus, in principle, a well documented experiment should 
+be repeatable automatically (e.g. by typing `make`); however, this is 
+not the case. Today's computational environments are complex and 
+accounting for all possible effects of changes within and across 
+systems is a challenging task [@freire_computational_2012 ; 
+@donoho_reproducible_2009].
 
-  * Non-determinism
+The terms _reproducibility_, _repeatability_, _replicability_ and 
+_recomputability_ (among many others) are often used, sometimes 
+interchangeably when discussing reproducibility in general. In our 
+work we only employ _repeatability_ and _reproducibility_. We borrow 
+and refine the definitions introduced by Vitek et al. 
+[@vitek_repeatability_2011]:
+
+> Repeatability. _The ability to re-run the exact same experiment with 
+> the same method on the same or similar system and obtain the same or 
+> very similar result._
+>
+> Reproducibility. _The independent confirmation of a scientific 
+> hypothesis through reproduction by an independent researcher/lab. 
+> The reproductions are carried out after a publication, based on the 
+> information in the paper and possibly some other information, such 
+> as data sets, published via scientific data repositories or provided 
+> by the authors on inquiry_.
+
+The line that divides repeatability from reproducibility can be 
+subjective; the phrase _exact same experiment with the same method on 
+the same or similar system_ from the definition of repeatability can 
+be a source of debate. To minimize confusion, we make it more concrete 
+by focusing the definition of repeatability w.r.t. the actual 
+components of an experiment. In general, an experiment is composed of 
+a relatively complex computational environment that includes one or 
+more of the following: hardware, virtualization, OS, configuration, 
+code, data and workload ([see](#sec:means) for an extended discussion 
+on this). We refer to these components (as a whole) as the _means_ of 
+an experiment. For each of these, we can determine precisely whether 
+they are the same as in the original experiment or not. We say that we 
+repeat an experiment if and only if the means are the same as in the 
+original execution. If any of them has changed and we re-execute the 
+experiment, we say we are now trying to reproduce the results.
+
+Version-control systems (VCS) are sometimes used to ease the 
+recreation of an experimental environment. By having a particular 
+version ID for the software and data used for an article's 
+experimental results, reviewers and readers can have access to the 
+same code base [@brown_how_2014]. However, availability of the source 
+code does not guarantee reproducibility [@collberg_measuring_2014] 
+since the code might not compile and, even if compilable, the results 
+might differ. In this case, the differences have to be analyzed in 
+order to corroborate the validity of the original experiment.
+
+Regardless of the vehicles used to repeat or reproduce the results, a 
+re-execution of an experiment has to be validated. At this point, the 
+reviewer has to answer the question: _"are these results validating 
+the original ones?"_. One alternative is to focus on the exact 
+quantitative observations, that is, to expect the exact same results 
+on every execution of the experiment. This should be true for an 
+experiment that is being repeated, that is, per definition,  when the 
+exact same experiment can be executed on the same environment. 
+However, if we take quantitative metrics as the basis for validation, 
+the wiggle room for reproducibility is very limited. We propose to 
+look at experiment goals instead.
+
+# Goals, Means and Observations
+
+An experiment is originally designed with the goal of proving a 
+high-level claim. For example, that a new system or algorithm improves 
+the state-of-the-art. The means of the experiment, as we mentioned, 
+are the particularities of how the experiment is carried out. An 
+experimental result can be validated on the basis of the goals, 
+assuming the means have been audited in order to confirm that they 
+resemble the original.
+
+![An experiment is designed with a goal in mind. The means of the 
+experiments are the implementation details. The outcome of the 
+experiment is summarized in figures and observations about them are 
+made in the prose of the article and in figure 
+captions.](figures/goals.png)
+
+There are many distinct types of experiment goals, i.e. the reason why 
+an experiment is designed the way it is. For example:
+
+  * _Proof of concept_. Show that the idea/algorithm/system works as 
+    described. For example, an scalability experiment that shows how 
+    the system scales better than the state-of-the-art. An alternative 
+    view: show how the system doesn't get in the way (overheads are 
+    negligible)
+  * _Decision-guiding_. Determine whether an observation is 
+    significant enough so that it needs to be addressed as part of the 
+    design of the system. For example, the NUMA locality experiment in 
+    the CRUISE paper
+  * _Robustness check_. Measure the sensibility of the system to 
+    changes in the environment.
+
+This list is not exhaustive, of course, but is representative of many 
+experiments found in the systems research literature.
+
+As part of the experiment execution, metrics are collected that are 
+dumped into an output dataset. This raw data can optionally be 
+summarized (e.g. obtain statistical descriptors) before being 
+displayed in a figure and described in the form of observations made 
+in the prose of the article (Figure 1).
+
+We propose the use of declarative formats to provide a researcher a 
+way of expressing in a high-level manner the relationship between the 
+means of an experiment, the raw data it produces, and the figures and 
+observations that are discussed in the article. In other words, given 
+the design of an experiment, enable the description of what is 
+expected in terms of measurements, so that a reviewer or reader can 
+validate the original author's claims.
+
+# Experiment Specification Format {#sec:format}
+
+An experiment specification can aid a scientist in explicitly capture 
+the contextual information of an experiment, as well as the high-level 
+reproducibility criteria that a re-execution should meet in order to 
+be considered valid. The main components of such a format should 
+capture:
+
+  * Experiment goals
+  * Means
+  * Raw output data schema
+  * Post-processing of output data.
+  * Validation clauses.
+
+The above can be captured in JSON (see Figure)
+
+Example:
+
+```json
+{
+"goal_location": {"section": "5.2", "par": 5},
+"goal_text": "demonstrate that SILT’s
+   indexes meet their design goal of
+   computation-efficient indexing.",
+"goal_category": ["proof"],
+"experiments":[ {
+  "reference":"figure-5",
+  "name":"MySQL insert benchmark",
+  "description":"",
+  "tags":["runtime"],
+  "hardware_dependencies": [ {
+      "type": "ram",
+      "clock": "1066Mhz",
+      "size": "24GB"
+    },
+    {
+      "type": "cpu",
+      "model": "Intel Xeon X5500",
+      "number_cpus": 2
+    }],
+  "software_dependencies": [ {
+      "type": "os",
+      "kernel": "linux",
+      "kernel_version": "2.6.32",
+      "distro": "debian",
+      "distro_version": "6.0"
+    },
+    {
+      "type": "database",
+      "name": "mysql",
+      "version": "5.0.67"
+    }],
+  "independent_variables": [
+    {
+      "type": "method",
+      "values": ["raw", "cuckoo", "trie"]
+    },
+    {
+      "type": "workload",
+      "values": ["individual", "bulk", "lookup"]
+    }
+  ],
+  "dependent_variable": {
+    "type":  "throughput",
+    "scale": "bytes/second"
+  },
+  "baseline": "raw",
+  "validations": [
+"for workload=* expect cuckoo > raw and trie > raw",
+"for lookup expect cuckoo > trie",
+"for individual and bulk expect cuckoo > trie"
+  ]}]}
+```
+
+## Experiment Goals {#sec:goals}
+
+The goals section of the specification points to the part of the paper 
+where the goal is stated.
+
+## Means of an Experiment {#sec:means}
+
+The components of an experiment:
+
   * Hardware
   * Virtualization
   * OS
   * Configuration. OS resources made available to the experiment.
   * Code
   * Data
-
-We refer to these components as the _means_ of an experiment. We say 
-we repeat an experiment iff the means are exactly the same as in the 
-original. If one of them change, we say we are now reproducing an 
-experimental result.
+  * Workload
+  * Non-determinism. Concurrency level, node placement, degree of 
+    consolidation (how many other users are in my same node), etc.
 
 For example, if the re-execution of an experiment that employs a 
 pseudo-random number generator uses a different seed than the 
@@ -72,84 +277,39 @@ CloudLab gets assigned with distinct bare-metal resources w.r.t. the
 original execution, it's not a repetition; the underlying resources 
 might have changed (e.g. moonshot vs. other type of chassis).
 
-## Goals, Means and Observations
+## Schema of Raw Data {#sec:schema}
 
-An experiment is originally designed with the goal of proving a 
-high-level claim. For example, that a new system or algorithm improves 
-significantly the state-of-the-art. The means of the experiment, as we 
-mentioned, are the particularities of how the experiment is carried 
-out. An experimental result can be validated on the basis of the 
-goals, assuming the means have been audited in order to confirm that 
-they resemble the original.
+**TODO**
 
-Then we will show figure with goals, the individual experiments, the 
-stuff with the stuff and the other things that go in the figure.
+## Validation Clauses {#sec:validation}
 
-## Repeatability vs. Reproducibility
+**TODO**
 
-While repeatability is the ideal, in many cases it's not possible to 
-attain.
+Syntax:
 
-  * Industrial contributions. Releasing the original code and data 
-    might not be possible. Thus the "means" of the experiment aren't 
-    the same
-  * Infrastructure. There might be particular hardware being used that 
-    it's hard to get access to.
-
-Thus, in this work we are interested in dealing with reproducibility.
-
-## Desiderata
-
-We want high-level expressibility that allows a scientist to specify 
-the expectations of an experiment. In other words, given the design of 
-an experiment, something that enables the description of what is 
-expected in terms of particular metrics
-
-# Specification
-
-The abstraction allows a researcher developer to specify distinct 
-properties such as availability, performance, encryption, 
-deduplication, compression, among others.
-
-All of these at the level of a container. Example:
-
-```json
-{
-"claims": [
-  {
-    "claim_location": {"section": "5.3.1", "paragraph": 4},
-    "claim_text": "The results of this experiment in Figure 8 show that our modifications have the largest impact – even when not multi- executing – for applications that extensively exploit data structures, like splay and raytrace. The results also con- firm our expectations that our prototype implementation more or less doubles execution time when actively multi- executing with two security levels. The io test shows only a negligible impact overhead, because while one security level blocks on I/O, the other level can continue to execute. The results are in line with previous research results of another SME implementation",
-    "claim_category": [""],
-    "experiments": [
-      {
-        "reference": "figure-8",
-        "name": "Microbenchmarks",
-        "description": "",
-        "tags": ["runtime"],
-        "hardware_dependencies": [],
-        "software_dependencies": [],
-        "independent_variables": [
-          {
-            "type": "algorithm",
-            "values": ["unmodified", "modified-without-sme", "modified-with-sme"]
-          },
-          {
-            "type": "workload",
-            "description": "Google Chrome v8 Benchmark Suite v6",
-            "values": ["crypto", "deltatable", "early-boyer", "raytrace", "regexp", "richards", "splay", "io"]
-          }
-        ],
-        "dependent_variable": { "type": "time", "scale": "n/a" },
-        "statistical_functions": {
-          "functions": [ "n/s" ],
-          "instances": 0
-        },
-        "baseline": "unmodified"
-      }
-    ]
-  },
+```yaml
 ```
-# Related Work {#related}
+
+# Case Study {#sec:case}
+
+We illustrate our approach by taking a concrete paper and describing 
+the validation clauses and the goals.
+
+# Discussion
+
+## The Validation Workflow {#sec:workflow}
+
+The experiment specification eases
+
+## Integration to existing infrastructure
+
+The
+
+# Conclusion
+
+We will conclude
+
+# Related Work {#sec:related}
 
 The challenging task of evaluating experimental results in applied 
 computer science has been long recognized [@ignizio_establishment_1971 
@@ -164,9 +324,9 @@ the _Software Sustainability Institute_ [@crouch_software_2013] have
 reproducibility as a central part of their endeavour but leave runtime 
 performance as a secondary problem. In systems research, runtime 
 performance _is_ the subject of study, thus we need to look at it as a 
-primary issue. By obtaining profiles of executions and making them 
-part of the results, we allow researchers to validate experiments with 
-performance in mind.
+primary issue.
+
+# References
 
 <!-- hanged biblio -->
 
