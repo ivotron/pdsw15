@@ -1,29 +1,30 @@
 ---
 title: "Tackling the Reproducibility Problem in Systems Research with Declarative Experiment Specifications"
 author:
-  - name: "Ivo Jimenez and Carlos Maltzahn"
-    affiliation: "University of California Santa Cruz"
+  - name: "Ivo Jimenez \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ Carlos Maltzahn"
+    affiliation: "UC Santa Cruz"
     email: "`{ivo,carlosm}@cs.ucsc.edu`"
   - name: "Jay Lofstead"
-    affiliation: "Sandia National Laboratories"
+    affiliation: "Sandia National Lab"
     email: "`gflofst@sandia.gov`"
-  - name: "Adam Moody and Kathryn Mohror"
-    affiliation: "Lawrence Livermore National Laboratories"
+  - name: "Adam Moody \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ Kathryn Mohror"
+    affiliation: "Lawrence Livermore National Lab"
     email: "`{moody11,kathryn}@llnl.gov`"
 abstract: |
   Evaluating experimental results in the field of computer systems is 
   a challenging task, mainly due to the many changes in software and 
-  hardware that computational environments go through. In this 
-  position paper, we introduce a declarative format for specifying the 
-  goals and outcomes of an experiment. We present a use case in the 
-  area of storage systems to illustrate the usefulness of this 
-  approach. We also discuss limitations and potential benefits of 
+  hardware that computational environments go through. In this paper, 
+  we introduce a declarative format for specifying the goals of an 
+  experiment and making falsifiable observations. We present a use 
+  case in the area of storage systems to illustrate the usefulness of 
+  this approach. We also discuss limitations and potential benefits of 
   using this approach in other areas of experimental systems research.
 tags:
   - vision-paper
   - socc15
 category: pubs
 layout: paper
+fontfamily: times
 classoption:
   - 10pt
   - reprint
@@ -66,7 +67,7 @@ systems is a challenging task [@freire_computational_2012 ;
 
 The terms _reproducibility_, _repeatability_, _replicability_ and 
 _recomputability_ (among many others) are often used, sometimes 
-interchangeably when discussing reproducibility in general. In our 
+interchangeably, when discussing reproducibility in general. In our 
 work we only employ _repeatability_ and _reproducibility_. We borrow 
 and refine the definitions introduced by Vitek et al. 
 [@vitek_repeatability_2011]:
@@ -83,17 +84,17 @@ and refine the definitions introduced by Vitek et al.
 > by the authors on inquiry_.
 
 The line that divides repeatability from reproducibility can be 
-subjective; the phrase _exact same experiment with the same method on 
-the same or similar system_ from the definition of repeatability can 
-be a source of debate. To minimize confusion, we make it more concrete 
-by focusing the definition of repeatability w.r.t. the actual 
-components of an experiment. In general, an experiment is composed of 
-a relatively complex computational environment that includes one or 
-more of the following: hardware, virtualization, OS, configuration, 
-code, data and workload ([see](#sec:means) for an extended discussion 
-on this). We refer to these components (as a whole) as the _means_ of 
-an experiment. For each of these, we can determine precisely whether 
-they are the same as in the original experiment or not. We say that we 
+subjective; from the definition of repeatability, the phrase _exact 
+same experiment with the same method on the same or similar system_ 
+can be a source of debate. To minimize confusion, we make it more 
+concrete by defining repeatability w.r.t. the components of an 
+experiment. In general, an experiment is composed of a relatively 
+complex computational environment that includes one or more of the 
+following: hardware, virtualization, OS, configuration, code, data and 
+workload ([see](#sec:means) for an extended discussion on this). We 
+refer to these components (as a whole) as the _means_ of an 
+experiment. For each of these, we can determine precisely whether they 
+are the same as in the original experiment or not. We say that we 
 repeat an experiment if and only if the means are the same as in the 
 original execution. If any of them has changed and we re-execute the 
 experiment, we say we are now trying to reproduce the results.
@@ -104,31 +105,41 @@ version ID for the software and data used for an article's
 experimental results, reviewers and readers can have access to the 
 same code base [@brown_how_2014]. However, availability of the source 
 code does not guarantee reproducibility [@collberg_measuring_2014] 
-since the code might not compile and, even if compilable, the results 
-might differ. In this case, the differences have to be analyzed in 
-order to corroborate the validity of the original experiment.
+since the code might not compile and, even if compilable, the 
+resulting program might not be similar to the original since 
+things like compilation flag ordering have an effect on the generation 
+of the binary executable. Reproducing an environment that resembles 
+the original one is a challenging task. Virtualization technologies 
+play a big role in accomplishing this [@clark_xen_2004 ; 
+@jimenez_role_2015]. In the end, if required, the means of an 
+experiment should be audited by experts in order to determine whether 
+they resemble the original.
 
-Regardless of the vehicles used to repeat or reproduce the results, a 
-re-execution of an experiment has to be validated. At this point, the 
+Regardless of whether an experiment is being repeated or reproduced, 
+the results of a re-execution have to be validated. At this point, the 
 reviewer has to answer the question: _"are these results validating 
-the original ones?"_. One alternative is to focus on the exact 
-quantitative observations, that is, to expect the exact same results 
-on every execution of the experiment. This should be true for an 
-experiment that is being repeated, that is, per definition,  when the 
-exact same experiment can be executed on the same environment. 
-However, if we take quantitative metrics as the basis for validation, 
-the wiggle room for reproducibility is very limited. We propose to 
-look at experiment goals instead.
+the original ones?"_. An alternative validation criteria can rely on 
+the exact quantitative observations, that is, a re-execution is 
+considered valid if the exact same numerical values of the output data 
+are obtained. This should be applicable for an experiment that is 
+being repeated since, per definition, the exact same experiment is 
+executed on the same environment. However, given the complex and 
+continual changes that computational environments go through, taking 
+exact quantitative metrics as the basis for validation might be 
+problematic, since more often than not an experiment will be 
+reproduced (rather than repeated), in which case the wiggle room for 
+validation is very limited. Thus, ideally, we would like to have a way 
+of specifying validation criteria that is as independent as possible 
+from the particular implementation details, i.e. a way of testing the 
+validity of an experimental result that is agnostic to the means of 
+the experiment. We propose to take experiment goals and observations 
+as the basis for validation.
 
 # Goals, Means and Observations
 
-An experiment is originally designed with the goal of proving a 
-high-level claim. For example, that a new system or algorithm improves 
-the state-of-the-art. The means of the experiment, as we mentioned, 
-are the particularities of how the experiment is carried out. An 
-experimental result can be validated on the basis of the goals, 
-assuming the means have been audited in order to confirm that they 
-resemble the original.
+The high-level structure of an experiment can be described as having 5 
+components: goals, means, raw output data, experiment visualizations 
+and observations (Figure 1).
 
 ![An experiment is designed with a goal in mind. The means of the 
 experiments are the implementation details. The outcome of the 
@@ -136,116 +147,124 @@ experiment is summarized in figures and observations about them are
 made in the prose of the article and in figure 
 captions.](figures/goals.png)
 
+An experiment is designed with a particular goal in mind. For example, 
+that under certain circumstances a new system or algorithm improves 
+the state-of-the-art by an order of magnitude. The means of the 
+experiment, as we mentioned, are the particularities of how the 
+experiment is carried out. As part of the experiment execution, 
+metrics are collected that are dumped into an output dataset. This raw 
+data can optionally be summarized (e.g. obtain statistical 
+descriptors) before being displayed in a figure and described in the 
+form of observations made in the prose of the article.
+
+<!--
+Do we need to talk more about the schema of the raw data? E.g. "These 
+descriptions make reference to elements from the metadata of the raw 
+output data (i.e. the schema of the raw data), for example, the 
+average throughput is 10x better than the baseline".
+-->
+
+We propose the use of declarative formats to provide a researcher a 
+way of expressing, in a high-level manner, the relationship between 
+the goals and means of an experiment, the raw data it produces, and 
+the figures and observations that are discussed in the article. In 
+other words, enable the author to provide a description of the design 
+of an experiment and its means of execution as well as the expected 
+observations that validate the author's claims. Such a description 
+serves two purposes. On one hand, a reviewer or reader that has access 
+to this description can, on her own, validate the original work by 
+testing whether the original observations hold on the re-generated 
+output data. On the other, the explicit specification of these 
+high-level elements aid an author in enhancing the design and 
+presentation of the experimental evaluation of a system.
+
+<!--
+[^claim]: We could refer to observations as "claims", but we purposely 
+avoid doing so since, as should be made clear later, a claim connotes 
+a strong validation criteria. In other words, if a claim is false, the 
+original experiment is faulty. While an observation might be false but 
+without invalidating the original result. **NOTE**: this might not be 
+true. If the observation is false, it means that the re-execution 
+environment is significantly distinct from the original that it 
+invalidates the premises of the original.
+-->
+
+# Experiment Specification Format {#sec:format}
+
+An experiment specification allows a scientist to explicitly capture 
+the contextual information of an experiment, as well as the high-level 
+tests that a re-execution should pass in order to be considered valid. 
+The main components of such a format should capture the components 
+mentioned previously. The JSON file format can be used to accomplish 
+this.
+
+```json
+{
+"goal_location": {"sec": "6.1", "par": 5},
+"goal_text": "demonstrate that Ceph scales
+  linearly with the size of the cluster",
+"goal_category": ["proof"],
+"experiments":[ {
+  "reference":"figure-8",
+  "name":"scalability experiment",
+  "tags":["throughput"],
+  "hardware_dependencies": [ {
+    "type": "disk",
+    "bw": "60MB/s",
+  }],
+  "software_dependencies": [ {
+    "type": "os",
+    "kernel": "linux",
+    "kernel_version": "2.6.32",
+    "distro": "debian",
+    "distro_version": "6.0"
+  },
+  {
+    "type": "storage",
+    "name": "ceph",
+    "version": "0.1.67"
+  }],
+  "independent_variables": [
+    {
+      "type": "method",
+      "values": ["raw", "ceph"]
+    },
+    {
+      "type": "size",
+      "values": ["2-24", 2]
+    }
+  ],
+  "dependent_variable": {
+    "type":  "throughput",
+    "scale": "mb/s"
+  },
+  "validations": [
+    "for size=* expect ceph in [raw*.9]"
+  ]}]}
+```
+
+For every high-level component, a section on the file exist. We 
+describe each subsequently.
+
+## Experiment Goals {#sec:goals}
+
 There are many distinct types of experiment goals, i.e. the reason why 
 an experiment is designed the way it is. For example:
 
   * _Proof of concept_. Show that the idea/algorithm/system works as 
     described. For example, an scalability experiment that shows how 
-    the system scales better than the state-of-the-art. An alternative 
-    view: show how the system doesn't get in the way (overheads are 
-    negligible)
-  * _Decision-guiding_. Determine whether an observation is 
-    significant enough so that it needs to be addressed as part of the 
-    design of the system. For example, the NUMA locality experiment in 
-    the CRUISE paper
-  * _Robustness check_. Measure the sensibility of the system to 
+    the system scales linearly.
+  * _Decision-guiding_. Determine whether a behavior is obtrusive 
+    enough so that it needs to be addressed as part of the design of 
+    the system. For example, the NUMA locality experiment in the 
+    CRUISE paper
+  * _Robustness check_. Measure the ability of the system to react to 
     changes in the environment.
+  * _Overhead quantification_. When overheads are expected, show how 
+    big are they.
 
-This list is not exhaustive, of course, but is representative of many 
-experiments found in the systems research literature.
-
-As part of the experiment execution, metrics are collected that are 
-dumped into an output dataset. This raw data can optionally be 
-summarized (e.g. obtain statistical descriptors) before being 
-displayed in a figure and described in the form of observations made 
-in the prose of the article (Figure 1).
-
-We propose the use of declarative formats to provide a researcher a 
-way of expressing in a high-level manner the relationship between the 
-means of an experiment, the raw data it produces, and the figures and 
-observations that are discussed in the article. In other words, given 
-the design of an experiment, enable the description of what is 
-expected in terms of measurements, so that a reviewer or reader can 
-validate the original author's claims.
-
-# Experiment Specification Format {#sec:format}
-
-An experiment specification can aid a scientist in explicitly capture 
-the contextual information of an experiment, as well as the high-level 
-reproducibility criteria that a re-execution should meet in order to 
-be considered valid. The main components of such a format should 
-capture:
-
-  * Experiment goals
-  * Means
-  * Raw output data schema
-  * Post-processing of output data.
-  * Validation clauses.
-
-The above can be captured in JSON (see Figure)
-
-Example:
-
-```json
-{
-"goal_location": {"section": "5.2", "par": 5},
-"goal_text": "demonstrate that SILT’s
-   indexes meet their design goal of
-   computation-efficient indexing.",
-"goal_category": ["proof"],
-"experiments":[ {
-  "reference":"figure-5",
-  "name":"MySQL insert benchmark",
-  "description":"",
-  "tags":["runtime"],
-  "hardware_dependencies": [ {
-      "type": "ram",
-      "clock": "1066Mhz",
-      "size": "24GB"
-    },
-    {
-      "type": "cpu",
-      "model": "Intel Xeon X5500",
-      "number_cpus": 2
-    }],
-  "software_dependencies": [ {
-      "type": "os",
-      "kernel": "linux",
-      "kernel_version": "2.6.32",
-      "distro": "debian",
-      "distro_version": "6.0"
-    },
-    {
-      "type": "database",
-      "name": "mysql",
-      "version": "5.0.67"
-    }],
-  "independent_variables": [
-    {
-      "type": "method",
-      "values": ["raw", "cuckoo", "trie"]
-    },
-    {
-      "type": "workload",
-      "values": ["individual", "bulk", "lookup"]
-    }
-  ],
-  "dependent_variable": {
-    "type":  "throughput",
-    "scale": "bytes/second"
-  },
-  "baseline": "raw",
-  "validations": [
-"for workload=* expect cuckoo > raw and trie > raw",
-"for lookup expect cuckoo > trie",
-"for individual and bulk expect cuckoo > trie"
-  ]}]}
-```
-
-## Experiment Goals {#sec:goals}
-
-The goals section of the specification points to the part of the paper 
-where the goal is stated.
+This list is not exhaustive, of course, but it is representative of 
+many experiments found in the systems research literature.
 
 ## Means of an Experiment {#sec:means}
 
@@ -279,23 +298,180 @@ might have changed (e.g. moonshot vs. other type of chassis).
 
 ## Schema of Raw Data {#sec:schema}
 
-**TODO**
+While it is important to capture the output data, making it part of 
+the experiment specification would be cumbersome and, as has been 
+mentioned, exact numerical repeatability is a very limited validation 
+criteria. Instead, it is more useful to have a description of the 
+metrics being captured, i.e. the metadata of the raw data output. For 
+example, if the measurements are stored in a CSV file, the experiment 
+specification should include the metadata of each column such as name, 
+aliases, types, scales and ranges.
 
-## Validation Clauses {#sec:validation}
+The specification format has two entries for independent and 
+dependent variables that are used to specify the schema of the raw 
+data. The latter refers to the metric being captured while the former 
+corresponds to the values over which the measurements were taken. 
+Additionally, if statistical functions are applied to the raw data, 
+these should be specified also (in the `statistical_functions` 
+section), along with the number of repetitions of the experiment.
 
-**TODO**
+## Observations and Validation Clauses {#sec:validation}
 
-Syntax:
+We propose using a DSL for codifying the observations.
 
-```yaml
+```antlr
+validation
+ : 'for' condition ('and' condition)*
+   'expect' result ('and' result)*
+ ;
+condition
+ : vars ('in' range | ('='|'<'|'>'|'!=') value)
+ ;
+result
+ : condition
+ ;
+vars
+ : var (',' var)*
+ ;
+range
+ : 'between' value 'and' value
+ |  [' range_num (',' range_num)* ']'
+ ;
+range_num
+ : NUMBER '-' NUMBER
+ ;
+value
+ : '*' | NUMBER (',' NUMBER)*
+ ;
+var
+ : STRING
+ ;
 ```
 
 # Case Study {#sec:case}
 
 We illustrate our approach by taking a concrete paper and describing 
-the validation clauses and the goals.
+the goals, observations and validation clauses that define the 
+criteria. We take the Ceph OSDI '06 paper [@weil_ceph_2006] and 
+reproduce one of its experiments. In particular, we look at the 
+scalability experiment from the data performance section (6.1). The 
+reason for selecting this paper is that we are familiar with these 
+experiments, making it easier to reason about contextual information 
+not necessarily available directly from the paper.
+
+The experiments in Section 6.1 of the original paper showed the 
+ability of Ceph to saturate disk evenly among the drives of the 
+cluster as well as scale with the size of the storage cluster. Results 
+of the scalability experiment are presented in Section 6.1.3 of the 
+Ceph paper. The goal of this experiment is to show that Ceph scales 
+linearly with the number of storage nodes, up to the point where the 
+network switch is saturated. This linear scalability is the validation 
+criteria for this experiment and thus what we would like to capture in 
+the specification.
+
+![Reprinting Figure 8 from the original paper. The original caption 
+reads: "_OSD write performance scales linearly with the 
+size of the OSD cluster until the switch is saturated at 24 OSDs. 
+CRUSH and hash performance improves when more PGs lower variance in 
+OSD utilization_."](figures/figure8.png)
+
+The experiment used 4 MB objects to minimize random I/O noise from the 
+hard drives. We ignore the performance of the `hash` data distribution 
+and increase the number of placement groups to 128 per node, thus we 
+meaningfully compare against the red solid-dotted line in Figure 8 of 
+the Ceph paper (Figure 8 on the original paper; reprinted below in 
+Figure 2).
+
+The original scalability experiment ran with 20 clients per node on 20 
+nodes (400 clients total) and varied the number of OSDs from 2-26 in 
+increments of 2. Every node was connected via 1 GbE link, so the 
+experiment theoretical upper bound was 2GB/s (when there was enough 
+capacity of the OSD cluster to have 20 1Gb connections) or 
+alternatively when the connection limit of the switch was reached. The 
+paper experiments were executed on a Netgear switch. This device has a 
+capacity of approximately 14 GbE in _real_ total traffic (from a 20 
+advertised), corresponding to the 24 * 58 = 1400 MB/s combined 
+throughput shown in the original paper.
+
+We scaled down the experiment by reducing the number of client nodes 
+to 1 (running 16 client threads). This means that our network upper 
+bound is approximately 110 MB/s (the capacity of the 1GbE link from 
+the client to the switch). We throttle I/O at 30 MB/s, so this is our 
+scaling unit (the per-OSD increment). The reason for throttling at 30 
+MB/s is that, over time, the Seagate disks have aged (they are 10 
+years old!) and overall performance among the hard drives of our 
+cluster is different from the ~58 MB/s observed in the original paper. 
+In order to amortize, we had to take the lowest common denominator 
+which in this case is 30 MB/s. We throttle I/O by configuring LXC 
+containers with the control group `blkio.throttle.write_bps_device` 
+directive. Figure 3 shows results of this scaled-down, throttled 
+version of the scalability experiment. An open question is to 
+determine if the process of scaling-down and throttling resources can 
+be automated, given the profile repository described in the previous 
+section.
+
+![Reproducing a scaled-down version of the original OSDI '06 
+scalability experiment. The y-axis represents average throughput, as 
+seen by the client. They x-axis corresponds to the size of the cluster 
+(in number of object storage devices (OSD). The square marker 
+corresponds to the average of 10 executions. The line with triangle 
+markers projects the original results to our setting. This projection 
+is obtained by having the 58 MB/s divided by 2 (to reflect the doubled 
+I/O operation of the current Ceph version), i.e. 24 MB/s as the 
+scalability unit of the original experiment.](figures/ceph.png)
+
+The sample experiment specification shown previously corresponds to this 
+experiment. The validation clause `for size=* expect ceph in [raw 
+* .90]` specifies the validation criteria for this experiment. As can 
+be noted, this is independent of the particularities of the experiment 
+setup.
 
 # Discussion
+
+We discuss several aspects of our proposal.
+
+## Falsifiable Observations
+
+We need to point out that the clauses serve to codify observations. 
+Depending on the goals of the experiment, these are either conditions 
+that **should** repeat in order to validate the approach of the paper, 
+or they can be an outcome of the particular setup that, if properly 
+recreated, should be observed. An example of these, respectively:
+
+ 1. Ceph's scalability experiment. Ceph should scale linearly with the 
+    number of OSDs regardless of the setup, as long as I/O is the 
+    bottleneck.
+ 2. The NUMA experiments of the CRUISE paper; these won't repeat on 
+    setups where the memory bandwidth is the same for the entire 
+    memory (in NUMA, there is the concept of local and remote banks).
+ 3. Subjective terms as "better", "slightly", "relatively quick", etc. 
+    get quantified. Although the explicit definition of a term is 
+    concrete, the subjective nature of it persists. But, at least it's 
+    clear what the "opinion" of the original author is in the context.
+ 4. Brings falsifiability into picture. Having the author specify 
+    validation ranges has the consequence of making the approach 
+    falsifiable. This, again, might be subjective but explicit.
+
+## False Observations Don't Invalidate Original Results
+
+In general, the category of an experiment goal dictates the tone on 
+which the results are judged. For example, if a re-execution of an 
+experiment shows sub-linear scalability while the original experiment 
+shows linear behavior, the result is clearly invalid. On the other 
+hand, if the overheads that were shown original experiment are minimal 
+or. In any case, 
+
+[^means]: this does not necessarily mean that the original experiment 
+is wrong. It might be that the means of the experiment do not resemble 
+the original.
+
+## Early Feedback
+
+From exercises we have done with authors:
+
+  * Provides a guide for defining experiment goals and thinking 
+    clearly about experiment design.
+  * Makes you think harder when finding meaningful baselines.
 
 ## The Validation Workflow {#sec:workflow}
 
@@ -305,7 +481,7 @@ The experiment specification eases
 
 The
 
-# Conclusion
+# Conclusion and Future Work
 
 We will conclude
 
