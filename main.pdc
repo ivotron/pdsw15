@@ -1,25 +1,34 @@
 ---
 title: "Tackling the Reproducibility Problem in Systems Research with Declarative Experiment Specifications"
 author:
-  - name: "Ivo Jimenez \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ Carlos Maltzahn"
+  - name: "Ivo Jimenez, Carlos Maltzahn"
     affiliation: "UC Santa Cruz"
     email: "`{ivo,carlosm}@cs.ucsc.edu`"
   - name: "Jay Lofstead"
     affiliation: "Sandia National Lab"
     email: "`gflofst@sandia.gov`"
-  - name: "Adam Moody \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ Kathryn Mohror"
+  - name: "Adam Moody, Kathryn Mohror"
     affiliation: "Lawrence Livermore National Lab"
-    email: "`{moody11,kathryn}@llnl.gov`"
+    email: "`{moody20,kathryn}@llnl.gov`"
 abstract: |
-  Evaluating experimental results in the field of computer systems is 
+  Validating experimental results in the field of computer systems is 
   a challenging task, mainly due to the many changes in software and 
-  hardware that computational environments go through. In this paper, 
-  we introduce a declarative format for specifying the goals of an 
-  experiment as well as describing testeable observations that serve 
-  as the basis for validation. We present a use case in the area of 
-  storage systems to illustrate the usefulness of this approach. We 
-  also discuss limitations and potential benefits of using this 
-  approach in other areas of experimental systems research.
+  hardware that computational environments go through. Determining if 
+  an experiment and corresponding results are reproducible entails two 
+  separate tasks: re-executing the experiment and validating the 
+  results. Existing reproducibility efforts have focused in the 
+  former, envisioning techniques and infrastructure that make it 
+  easier to re-execute an experiment. In this work we focus on the 
+  latter by analyzing the validation workflow that an experiment 
+  re-executioner goes through. We notice that validating results is 
+  done on the basis of experiment design and high-level goals, rather 
+  than exact quantitavie metrics. Based on this insight, we introduce 
+  a declarative format for specifying these high-level components of 
+  an experiment as well as describing generic, testeable conditions 
+  that serve as the basis for validation. We present a use case in the 
+  area of storage systems to illustrate the usefulness of this 
+  approach. We also discuss limitations and potential benefits of 
+  using this approach in other areas of experimental systems research.
 tags:
   - vision-paper
   - socc15
@@ -50,28 +59,39 @@ understand results, as well as verify that the experiment was
 performed according to acceptable procedures. Additionally, 
 reproducibility plays a major role in education since the amount of 
 information that a student has to digest increases as the pace of 
-scientific discovery accelerates. By having the ability to repeat 
+scientific discovery accelerates. By having the ability to reproduce 
 experiments, a student can learn by looking at provenance information, 
 re-evaluate the questions that the original experiment answered and 
-thus "stand on the shoulder of giants".
+thus "stand on the shoulder of giants". In applied computer science an 
+experiment is carried out in its entirety on a computer. Thus, in 
+principle, a well documented experiment should be reproducible 
+automatically (e.g. by typing `make`); however, this is not the case. 
+Today's computational environments are complex and accounting for all 
+possible effects of changes within and across systems is a challenging 
+task [@freire_computational_2012 ; @donoho_reproducible_2009].
 
-In applied computer science an experiment is carried out in its 
-entirety on a computer. Repeating an experiment doesn't require a 
-scientist to rewrite a program, rather it entails obtaining the 
-original program and executing it (possibly in a distinct 
-environment). Thus, in principle, a well documented experiment should 
-be repeatable automatically (e.g. by typing `make`); however, this is 
-not the case. Today's computational environments are complex and 
-accounting for all possible effects of changes within and across 
-systems is a challenging task [@freire_computational_2012 ; 
-@donoho_reproducible_2009].
+The topic of reproducibility has gained substantial attention lately 
+in systems research [@vitek_repeatability_2011 ; 
+@collberg_repeatability_2015 ; @dietrich_dataref_2015 ; 
+@feitelson_repeatability_2015], computer science 
+[@neylon_changing_2012 ; @peng_reproducible_2011] and science in 
+general [@achenbach_new_2015 ; @yaffe_reproducibility_2015 ; 
+@editorial_journals_2014]. The role of computers in new scientific 
+discoveries has only increased and will keep doing so. Coupled with 
+this, the advent of cloud computing makes it easier to share code and 
+data, making it straight-forward to collaborate in the implementation 
+of experiments. In this scenario, there is a serious lack of tools 
+that allow researchers to identify when an experiment is generating 
+valid results. So while it is becoming easier to collaborate, it's not 
+easy to determine the validity of experiments. The goal of our work is 
+to close this gap in the area of systems research and storage systems 
+in particular.
 
-The terms _reproducibility_, _repeatability_, _replicability_ and 
-_recomputability_ (among many others) are often used, sometimes 
-interchangeably, when discussing reproducibility in general. In our 
-work we only employ _repeatability_ and _reproducibility_. We borrow 
-and refine the definitions introduced by Vitek et al. 
-[@vitek_repeatability_2011]:
+When discussing reproducibility, the terms _reproducibility_, 
+_repeatability_, _replicability_ and _recomputability_ (among many 
+others) are often used, sometimes interchangeably. In our work we only 
+employ _repeatability_ and _reproducibility_. We borrow and refine the 
+definitions introduced by Vitek et al. [@vitek_repeatability_2011]:
 
 > Repeatability. _The ability to re-run the exact same experiment with 
 > the same method on the same or similar system and obtain the same or 
@@ -84,54 +104,60 @@ and refine the definitions introduced by Vitek et al.
 > as data sets, published via scientific data repositories or provided 
 > by the authors on inquiry_.
 
-The line that divides repeatability from reproducibility can be 
-subjective; from the definition of repeatability, the phrase _exact 
-same experiment with the same method on the same or similar system_ 
-can be a source of debate. To minimize confusion, we make it more 
-concrete by defining repeatability w.r.t. the components of an 
-experiment. In general, an experiment is composed of a relatively 
-complex computational environment that includes one or more of the 
-following: hardware, virtualization, OS, configuration, code, data and 
-workload ([see\ ](#sec:means) for an extended discussion on this). We 
-refer to these components as the _means_ of an experiment. For each of 
-these, we can determine precisely whether they are the same as in the 
-original experiment or not. We say that we repeat an experiment if and 
-only if the means are the same as in the original execution. If any of 
-them has changed and we re-execute the experiment, we say we are now 
-trying to reproduce the results.
+From these, we notice that the _repeatable_ and _reproducibility_ 
+qualifiers apply to both the re-execution of an experiment and the 
+validation of its results. In our case, we emphasize the distinction 
+between re-execution and validation since it facilitates the 
+discussion and makes it easer to identify the missing pieces in terms 
+of a generic, systematic approach to reproducibility. In terms of 
+experiment re-execution, the line that divides repeatability from 
+reproducibility can be subjective; from the definition of 
+repeatability, the phrase _exact same experiment with the same method 
+on the same or similar system_ can be a source of debate. To minimize 
+confusion, we make it more concrete by defining repeatability w.r.t. 
+the components of an experiment. In general, an experiment is composed 
+of a relatively complex computational environment that includes one or 
+more of the following: hardware, virtualization, OS, configuration, 
+code, data and workload ([see\ ](#sec:means) for an extended 
+discussion on this). We refer to these components as the _means_ of an 
+experiment. For each of these, we can determine precisely whether they 
+are the same as in the original experiment or not. We say that we 
+repeat an experiment if and only if the means are the same as in the 
+original execution. If any of them has changed and we re-execute the 
+experiment, we say we are now trying to reproduce the original 
+execution.
 
 Version-control systems (VCS) are sometimes used to ease the 
 recreation of an experimental environment. By having a particular 
 version ID for the software and data used for an article's 
-experimental results, reviewers and readers can have access to the 
-same code base [@brown_how_2014]. However, availability of the source 
-code does not guarantee reproducibility [@collberg_measuring_2014] 
-since the code might not compile and, even if compilable, the 
-resulting program might not be similar to the original since 
-things like compilation flag ordering have an effect on the generation 
-of the binary executable. Recreating an environment that resembles the 
-one where an experiment was originally executed is a challenging task 
-[@krishnamurthi_real_2015]. Virtualization technologies play a big 
-role in accomplishing this [@clark_xen_2004 ; @jimenez_role_2015]. In 
-the end, if required, the means of an experiment can be audited by 
+experimental results, code is accessible [@brown_how_2014]. However, 
+availability of the source code does not guarantee execution 
+repeatability [@collberg_repeatability_2015] since the code might not 
+compile and, even if compilable, the resulting program might not be 
+generate the same results. Recreating an environment that resembles 
+the one where an experiment was originally executed is a challenging 
+task [@krishnamurthi_real_2015]. Virtualization technologies play a 
+big role in accomplishing this [@clark_xen_2004 ; @jimenez_role_2015]. 
+In the end, if required, the means of an experiment can be audited by 
 experts in order to determine whether they resemble the original.
 
-Regardless of whether an experiment is being repeated or reproduced, 
-the results of a re-execution have to be validated. At this point, the 
-reviewer has to answer the question: _"are these results validating 
-the original ones?"_. An alternative validation criteria can rely on 
-the exact quantitative observations, that is, a re-execution validates 
-the original work if the exact same numerical values of the original 
-output data are obtained. This should be applicable for an experiment 
-that is being repeated since, per definition, the exact same 
-experiment is executed on the same environment. However, given the 
-complex and continual changes that computational environments go 
-through, taking exact quantitative metrics as the basis for validation 
-might be problematic, since more often than not an experiment will be 
-reproduced (rather than repeated), in which case the wiggle room for 
-validation is very limited. Thus, ideally, we would like to have a way 
-of specifying validation criteria that is as independent as possible 
-from the particular implementation details, i.e. a way of testing the 
+The second step in determining the reproducibility of an experiment is 
+validating the results of an execution. Regardless of whether an 
+execution is repeated or reproduced, at this point, the reviewer has 
+to answer the question: _"are these results validating the original 
+ones?"_. An alternative validation criteria can rely on the exact 
+quantitative observations, that is, results validate the original work 
+if the exact same numerical values of the original output data are 
+obtained. This should be applicable for an experiment that is being 
+repeated since, per definition, the exact same experiment is executed 
+on the same environment. However, given the complex and continual 
+changes that computational environments go through, taking exact 
+quantitative metrics as the basis for validation might be problematic, 
+since more often than not an experiment execution will be reproduced 
+(rather than repeated), in which case the wiggle room for validation 
+is very limited. Thus, ideally, we would like to have a way of 
+specifying validation criteria that is as independent as possible from 
+the particular implementation details, i.e. a way of testing the 
 validity of the original work that is agnostic to the means of the 
 experiment. We propose to take experiment goals and observations as 
 the basis for validation.
@@ -213,10 +239,8 @@ section of the ESF next.
  }],
  "software_dependencies": [ {
    "type": "os",
-   "kernel": "linux",
-   "kernel_version": "2.6.32",
-   "distro": "debian",
-   "distro_version": "6.0"
+   "kernel": "linux 2.6.32",
+   "distro": "debian 6.0"
  },
  {
    "type": "storage",
@@ -378,7 +402,7 @@ range
  | '[' value (',' value)* ']'
  ;
 value
- : '*' | NUMBER | var ('*') NUMBER
+ : '*' | NUMBER | var '*' NUMBER
  ;
 var
  : STRING
@@ -507,8 +531,8 @@ way that the DSL is designed, validation ranges have to be provided
 for each observation so that it can be tested. This has the 
 implication of turning observations into falsifiable statements 
 [@popper_logic_2002]. These are conditions that should hold in order 
-to validate the approach of the paper. In other words, if the means of 
-the experiment are properly recreated, these conditions should be 
+to validate the conclusions of the paper. In other words, if the means 
+of the experiment are properly recreated, these conditions should be 
 observed.
 
 <!--
@@ -534,14 +558,16 @@ falsifiable statements are treated. For an experiment that proves a
 concept or design, a failed validation clause has more weight than, 
 say, an experiment that quantifies an expected overhead. For example, 
 a system that claims to achieve linear scalability, the corresponding 
-validation clauses is more significant than those for an experiment 
+validation clauses are more significant than those for an experiment 
 that shows the overhead of a new file system implemented as a FUSE 
-module. In the former, a failed validation invalidate the whole work 
-while in the latter the failed test talks about a minor aspect of the 
+module. In the former, a failed validation invalidates the whole work 
+while in the latter the failed test invalidates a minor aspect of the 
 work. In other words, some experiments evaluate a high-level claim 
 while others evaluate implementation decisions, hence the importance 
 of looking at experiment goals while looking at validations; goals set 
-the mindset of the reader or reviewer that validates the work.
+the mindset of the reader or reviewer that validates the work whenever 
+she encounters failed validations. This is the main motivation for 
+having goals as an explicit entry on the ESF.
 
 ## The Validation Workflow {#sec:workflow}
 
@@ -568,35 +594,49 @@ account for all of them.
 
 ## Early Feedback
 
-From exercises we have done with authors:
+The following are quotes from authors that have kindly worked with us 
+by creating specifications for some of their published work:
 
-  * Makes you think clearly about the overall experiment design.
-  * Provides a nice template for carrying out experiments.
-  * Makes you find meaningful baselines. Reporting raw numbers in 
-    figures and observations makes it harder to validate results. 
-    Specifying validation clauses w.r.t. to baselines and normalized 
-    values makes it easier to generate reproducible experiments.
+> Author 1: _Makes you think clearly about the overall experiment 
+> design_.
 
-## Integration to existing infrastructure
+> Author 2: _Provides a nice template for carrying out experiments_.
+
+> Author 3: _Makes you find meaningful baselines. Reporting raw 
+> numbers in figures and observations makes it harder to validate 
+> results. Specifying validation clauses in terms of baselines and 
+> normalized values makes it easier to report reproducible results_.
+
+In general, we have noticed that the exercise of explicitly specifying 
+the validation criteria creates a feedback loop in an author's mind 
+that results in insightful ideas when it comes to experiment design, 
+baseline selection and validation criteria.
+
+## Integration into Existing Infrastructure
 
 Experimental platforms such as CloudLab [@ricci_introducing_2014] can 
-incorporate the notion of experiment execution so that for every 
-experiment a record of executions is maintained. For each execution, 
-the _means_ section of the ESF can be automatically populated. 
-Validation statements can also provide another testability layer for 
-continuous integration (CI) systems such as Jenkins.
+incorporate the notion of _execution_ so that for every experiment a 
+record of executions is maintained. For each execution, the means 
+section of the ESF can be automatically populated. Validation 
+statements can also provide another testability layer for continuous 
+integration (CI) systems such as Jenkins.
 
 # Conclusion and Future Work
 
 In the words of Karl Popper: "_the criterion of the scientific status 
 of a theory is its falsifiability, or refutability, or testability_". 
 By providing a way to specify the high-level components of an 
-experiment we effectively incorporate falsifiability to systems 
-evaluation. We are in the process of further testing the viability of 
-the ESF on experiments from other areas of systems research. As part 
-of our work, we are working with colleagues in our field to create 
-descriptions for already-published and going over them to see if they 
-capture the validation criteria for their experiments.
+experiment and validation clauses for observed metrics we effectively 
+incorporate falsifiability to systems evaluation. We are in the 
+process of further testing the viability of the ESF on experiments 
+from other areas of systems research. As part of our work, we are 
+working with colleagues in our field to create descriptions for 
+already-published experiments and going over them to see if they 
+capture the validation criteria for these.
+
+While we envision our findings being applicable in the area of storage 
+systems, we plan to analyze evaluate its suitability on other areas of 
+systems research and computer science in general.
 
 # Related Work {#sec:related}
 
