@@ -23,12 +23,12 @@ abstract: |
   re-executioner goes through. We notice that validating results is 
   done on the basis of experiment design and high-level goals, rather 
   than exact quantitavie metrics. Based on this insight, we introduce 
-  a declarative format for specifying these high-level components of 
-  an experiment as well as describing generic, testeable conditions 
-  that serve as the basis for validation. We present a use case in the 
-  area of storage systems to illustrate the usefulness of this 
-  approach. We also discuss limitations and potential benefits of 
-  using this approach in other areas of experimental systems research.
+  a declarative format for specifying the high-level components of an 
+  experiment as well as describing generic, testeable conditions that 
+  serve as the basis for validation. We present a use case in the area 
+  of storage systems to illustrate the usefulness of this approach. We 
+  also discuss limitations and potential benefits of using this 
+  approach in other areas of experimental systems research.
 tags:
   - vision-paper
   - socc15
@@ -104,28 +104,29 @@ definitions introduced by Vitek et al. [@vitek_repeatability_2011]:
 > as data sets, published via scientific data repositories or provided 
 > by the authors on inquiry_.
 
-From these, we notice that the _repeatable_ and _reproducibility_ 
-qualifiers apply to both the re-execution of an experiment and the 
-validation of its results. In our case, we emphasize the distinction 
-between re-execution and validation since it facilitates the 
-discussion and makes it easer to identify the missing pieces in terms 
-of a generic, systematic approach to reproducibility. In terms of 
-experiment re-execution, the line that divides repeatability from 
-reproducibility can be subjective; from the definition of 
-repeatability, the phrase _exact same experiment with the same method 
-on the same or similar system_ can be a source of debate. To minimize 
-confusion, we make it more concrete by defining repeatability w.r.t. 
-the components of an experiment. In general, an experiment is composed 
-of a relatively complex computational environment that includes one or 
-more of the following: hardware, virtualization, OS, configuration, 
-code, data and workload ([see\ ](#sec:means) for an extended 
-discussion on this). We refer to these components as the _means_ of an 
-experiment. For each of these, we can determine precisely whether they 
-are the same as in the original experiment or not. We say that we 
-repeat an experiment if and only if the means are the same as in the 
-original execution. If any of them has changed and we re-execute the 
-experiment, we say we are now trying to reproduce the original 
-execution.
+An experiment can be seen as composed by (1) its execution and (2) the 
+validation of the results. From the above definitions, we notice that 
+the _repeatable_ and _reproducibility_ qualifiers apply to both. In 
+our case, we treat re-execution and validation separately since it 
+facilitates the discussion and makes it easer to identify the missing 
+pieces in terms of a generic, systematic approach to reproducibility.
+
+In terms of experiment re-execution, the line that divides 
+repeatability from reproducibility can be subjective; from the 
+definition of repeatability, the phrase _exact same experiment with 
+the same method on the same or similar system_ can be a source of 
+debate. To minimize confusion, we make it more concrete by defining 
+repeatability w.r.t. the components of an experiment. In general, an 
+experiment is composed of a relatively complex computational 
+environment that includes one or more of the following: hardware, 
+virtualization, OS, configuration, code, data and workload ([see\ 
+](#sec:means) for an extended discussion on this). We refer to these 
+components as the _means_ of an experiment. For each of these, we can 
+determine precisely whether they are the same as in the original 
+experiment or not. We say that we repeat an experiment if and only if 
+the means are the same as in the original execution. If any of them 
+has changed and we re-execute the experiment, we say we are now trying 
+to reproduce the original execution.
 
 Version-control systems (VCS) are sometimes used to ease the 
 recreation of an experimental environment. By having a particular 
@@ -159,8 +160,8 @@ is very limited. Thus, ideally, we would like to have a way of
 specifying validation criteria that is as independent as possible from 
 the particular implementation details, i.e. a way of testing the 
 validity of the original work that is agnostic to the means of the 
-experiment. We propose to take experiment goals and observations as 
-the basis for validation.
+experiment. We propose to take experiment goals as the basis for 
+validation and treat observations in the context of these goals.
 
 # Goals, Means and Observations
 
@@ -196,9 +197,9 @@ and observations that are discussed in the article. In other words, it
 enables the author to provide a description of the design of an 
 experiment and its means of execution as well as the expected 
 observations that validate the author's claims. Such a description 
-serves two purposes. On one hand, a reviewer or reader that has access 
-to this description can, on her own, validate the original work by 
-testing whether the original observations hold on the re-generated 
+serves two purposes. On the one hand, a reviewer or reader that has 
+access to this description can, on her own, validate the original work 
+by testing whether the original observations hold on the re-generated 
 output data. On the other, the explicit specification of these 
 high-level elements aid an author in enhancing the design and 
 presentation of the experimental evaluation of a system.
@@ -297,8 +298,8 @@ an experiment is designed the way it is. For example:
 This list is not exhaustive, of course, but it is representative of 
 many experiments found in the systems research literature. The first 
 elements in the ESF point to the experimental goals and link it with a 
-one or more experiments in an article (lines 2-5) that are implemented 
-in order to achieving them.
+one or more experiments in an article (lines 2-5) that serve to back 
+them.
 
 ## Means of an Experiment {#sec:means}
 
@@ -306,22 +307,22 @@ in order to achieving them.
 
 While computational systems are complex, advances in version-control 
 and cloud computing technologies make it easier to recreate the 
-environment no which an experiment runs. Immutability makes it easier 
+environment on which an experiment runs. Immutability makes it easier 
 to _pin_ a large majority of the components of an experiment as well 
 as infer and package its dependencies [@chirigati_reprozip_2013]. For 
 those components that cannot be fixed to a particular state, there is 
 tooling that automatically obtains and formats detailed information 
 about the state of the execution platform, making it easier to compare 
-between original and recreated environments. The challenge lies in 
-finding the root cause of the differences in original and reproduced 
-results [@jimenez_redo_2014].
+between original and re-execution environments. The challenge lies in 
+finding, when present, the root cause of the differences in original 
+and reproduced results [@jimenez_redo_2014].
 
 The ESF contains a section to specify this. In the example, this 
-corresponds to lines 10-25. This is a simplified list of dependencies 
-of the experiment, used only to exemplify the type of information that 
-is captured in these entries. A real example would be more 
+corresponds to lines 10-23. This is a simplified list of dependencies 
+of the experiment, used only to illustrate the type of information 
+that is captured in these entries. A real example would be more 
 comprehensive, potentially relying on tools that obtain this 
-information automatically.
+information [automatically](https://github.com/sosreport/sos).
 
 <!--
 
@@ -367,11 +368,11 @@ specification should include the metadata of each column such as name,
 aliases, types, scales and ranges.
 
 The ESF has two entries for independent and dependent variables that 
-are used to specify the schema of the output data (lines 26-39). The 
+are used to specify the schema of the output data (lines 24-37). The 
 latter refers to the metric being captured while the former 
-corresponds to the values over which the measurements were taken. 
+corresponds to the values over which the measurements are taken. 
 Additionally, if statistical functions are applied to the raw data, 
-these should be specified also (lines 40-43), along with the number of 
+these should be specified also (lines 38-41), along with the number of 
 repetitions of the experiment.
 
 ## Observations and Validation Clauses {#sec:validation}
@@ -511,8 +512,27 @@ is obtained by having the 58 MB/s divided by 2 (to reflect the doubled
 I/O operation of the current Ceph version), i.e. 24 MB/s as the 
 scalability unit of the original experiment.](figures/ceph.png)
 
+We see that Ceph scales linearly with the number of OSDs, up to the 
+point where we saturate the 1GbE link[^linearity]. We note that we 
+don't see 30 MB/s of net I/O utilization since the current version of 
+Ceph issues two I/O calls on each write request, one to the 
+write-ahead log and another one to the data backend. The original 
+experiments used a prototype version of Ceph that didn't include this 
+atomicity/durability feature. Figure 3 also shows a projection of the 
+original data to our setting. The original result shows better 
+scalability behavior due to newer and more stable hard drives.
+
+[^linearity]: The experiment scales linearly up to 4 nodes. At OSD 
+number 5, the 1 GbE link begins to exhibit the effects of network 
+pressure. We empirically corroborated this by re-executing the 
+experiment with two client nodes, in which case the experiment scales 
+linearly up to 8 OSD nodes; at OSD number 9, the two links begin to be 
+pressured (approximately 140 MB/s). This data is available at the 
+repository associated to this paper 
+<https://github.com/ivotron/socc15>
+
 The sample experiment specification shown earlier ([](#sec:format)) 
-corresponds to this experiment. The validation clause in lines 45-48 
+corresponds to this experiment. The validation clause in lines 42-47 
 specifies the reproducibility criteria for this experiment. As can be 
 noted, this is independent of the particularities of the experiment 
 setup. As figure 3 shows, even though our setup is different from the 
@@ -571,31 +591,23 @@ having goals as an explicit entry on the ESF.
 
 ## The Validation Workflow {#sec:workflow}
 
-The workflow:
+The ESF has the structure of a conditional statement: given the goals 
+and means of an experiment, the observations on the output data should 
+hold. Thus, if the validation statements are false w.r.t. to the 
+output data of the re-execution of an experiment, it is either because 
+the differences between the means of the original and reproduced 
+experiment are significantly different, or the original claims are 
+false. Thus, before one can determine the latter, one has to audit the 
+differences between the means of experimentation and account for all 
+of them (Figure 4).
 
-  1. Grab experiment, treating its means as a black box.
-  2. Execute and validate by testing results against validation 
-     clauses.
-  3. If test fails. This is due to one of two reasons:
-      1. The means of experiment are significantly different from the 
-         original ones. In this case, the means of an experiment have 
-         to be introspected (i.e. treated as a white/gray box now).
-      2. Original work is invalid.
-
-The structure of the ESF has the structure of a conditional statement: 
-given the goals and _means_ of an experiment, the observations on the 
-output data should hold. Thus, if the validation statements are false 
-w.r.t. to the output data of the re-execution of an experiment, it is 
-either because the differences between the means of the original and 
-reproduced experiment are significantly different, or the original 
-claims are false. Thus, before one can determine the latter, one has 
-to audit the differences between the means of experimentation and 
-account for all of them.
+![Validation workflow.](figures/workflow.png)
 
 ## Early Feedback
 
 The following are quotes from authors that have kindly worked with us 
-by creating specifications for some of their published work:
+by creating specifications for one or more of their published 
+experiments:
 
 > Author 1: _Makes you think clearly about the overall experiment 
 > design_.
@@ -632,11 +644,9 @@ process of further testing the viability of the ESF on experiments
 from other areas of systems research. As part of our work, we are 
 working with colleagues in our field to create descriptions for 
 already-published experiments and going over them to see if they 
-capture the validation criteria for these.
-
-While we envision our findings being applicable in the area of storage 
-systems, we plan to analyze evaluate its suitability on other areas of 
-systems research and computer science in general.
+capture the validation criteria for these. While we envision our 
+findings to be applicable in the area of storage systems, we plan to 
+evaluate its suitability on other areas of computer science.
 
 # Related Work {#sec:related}
 
@@ -655,19 +665,21 @@ performance as a secondary problem. In systems research, runtime
 performance _is_ the subject of study, thus we need to look at it as a 
 primary issue.
 
-In [@collberg_measuring_2014] the authors took 613 articles published 
-in 13 top-tier systems research conferences and found that 25% of the 
-articles are reproducible (under their reproducibility criteria). The 
-authors did not analyze performance. In our case, we are interested 
-not only in being able to rebuild and execute binaries but also in 
-validating the original claims by examining the characteristics of the 
-output of the experiment.
+In [@collberg_repeatability_2015] the authors took 601 articles 
+published in 13 top-tier systems research conferences and found that 
+32.3% of the articles are repeatable (under their _weak repeatability_ 
+criteria). The authors did not validate the original results. In our 
+case, we are interested not only in being able to rebuild and execute 
+binaries (repeat/reproduce the execution) but also in validating the 
+original claims by testing falsifiable statements on the output of the 
+experiment.
 
 Krishnamurthi and Vitek [@krishnamurthi_real_2015] emphasize the 
 importance of repeatability and describe recent efforts by the systems 
-research community. We see our work as complementary to these, since 
-as we have exemplified, validation criteria should hold regardless of 
-whether results are repeated or reproduced.
+research community to encourage the submission of experiment artifacts 
+as assets associated to an article. We see our work as complementary 
+to these. An experiment specification could also be part of this list 
+of assets, making it easier to validate a re-generated result.
 
 # References
 
@@ -675,6 +687,6 @@ whether results are repeated or reproduced.
 
 \noindent
 \vspace{-2em}
-\setlength{\parindent}{-0.2in}
+\setlength{\parindent}{-0.26in}
 \setlength{\leftskip}{0.2in}
 \setlength{\parskip}{8pt}
