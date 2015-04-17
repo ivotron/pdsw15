@@ -16,3 +16,6 @@
 [submodule "vendor/pandoc-attributes"]
 	path = vendor/pandoc-attributes
 	url = git@github.com:aaren/pandoc-attributes.git
+[submodule "vendor/ceph_osdi06"]
+	path = vendor/ceph_osdi06
+	url = git@github.com:ivotron/ceph_osdi06

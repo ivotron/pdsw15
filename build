@@ -9,5 +9,6 @@ docker run \
   -v `pwd`/figures:/root/figures \
   -v `pwd`/out:/root/out \
   ivotron/pandoc:1.13.2 \
+    --highlight-style tango \
     --filter pandoc-citeproc \
     --output=out/main.pdf main.pdc 2> pandoc.log
