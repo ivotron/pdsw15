@@ -205,17 +205,6 @@ output data. On the other, the explicit specification of these
 high-level elements aid an author in enhancing the design and 
 presentation of the experimental evaluation of a system.
 
-<!--
-[^claim]: We could refer to observations as "claims", but we purposely 
-avoid doing so since, as should be made clear later, a claim connotes 
-a strong validation criteria. In other words, if a claim is false, the 
-original experiment is faulty. While an observation might be false but 
-without invalidating the original result. **NOTE**: this might not be 
-true. If the observation is false, it means that the re-execution 
-environment is significantly distinct from the original that it 
-invalidates the premises of the original.
--->
-
 # Experiment Specification Format {#sec:format}
 
 An experiment specification format (ESF) allows a scientist to 
@@ -552,24 +541,6 @@ implication of turning observations into falsifiable statements
 to validate the conclusions of the paper. In other words, if the means 
 of the experiment are properly recreated, these conditions should be 
 observed.
-
-<!--
-An example of these, respectively:
-
-  * Ceph's scalability experiment. Ceph should scale linearly with the 
-    number of OSDs regardless of the setup, as long as I/O is the 
-    bottleneck.
-  * The NUMA experiments of the CRUISE paper; these won't repeat on 
-    setups where the memory bandwidth is the same for the entire memory 
-    (in NUMA, there is the concept of local and remote banks).
-  * Subjective terms as "better", "slightly", "relatively quick", etc. 
-    get quantified. Although the explicit definition of a term is 
-    concrete, the subjective nature of it persists. But, at least it's 
-    clear what the "opinion" of the original author is in the context.
-  * Brings falsifiability into picture. Having the author specify 
-    validation ranges has the consequence of making the approach 
-    falsifiable. This, again, might be subjective but explicit.
--->
 
 Experiment goals ([](#sec:goals)) set the tone in which these 
 falsifiable statements are treated. For an experiment that proves a 
