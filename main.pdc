@@ -1,15 +1,9 @@
 ---
 title: "Tackling the Reproducibility Problem in Systems Research with Declarative Experiment Specifications"
 author:
-  - name: "Ivo Jimenez, Carlos Maltzahn"
+  - name: "Ivo Jimenez"
     affiliation: "UC Santa Cruz"
-    email: "`{ivo,carlosm}@cs.ucsc.edu`"
-  - name: "Jay Lofstead"
-    affiliation: "Sandia National Lab"
-    email: "`gflofst@sandia.gov`"
-  - name: "Adam Moody, Kathryn Mohror"
-    affiliation: "Lawrence Livermore National Lab"
-    email: "`{moody20,kathryn}@llnl.gov`"
+    email: "`ivo@cs.ucsc.edu`"
 abstract: |
   Validating experimental results in the field of computer systems is 
   a challenging task, mainly due to the many changes in software and 
@@ -21,10 +15,10 @@ abstract: |
   experiment. In this work we focus on the latter by analyzing the 
   validation workflow that an experiment re-executioner goes through. 
   We notice that validating results is done on the basis of experiment 
-  design and high-level goals, rather than exact quantitavie metrics. 
+  design and high-level goals, rather than exact quantitative metrics. 
   Based on this insight, we introduce a declarative format for 
   specifying the high-level components of an experiment as well as 
-  describing generic, testeable conditions that serve as the basis for 
+  describing generic, testable conditions that serve as the basis for 
   validation. We present a use case in the area of storage systems to 
   illustrate the usefulness of this approach. We also discuss 
   limitations and potential benefits of using this approach in other 
@@ -41,6 +35,7 @@ classoption:
 numbersections: true
 documentclass: sigplanconf
 substitute-hyperref: true
+monofont-size: scriptsize
 sigplanconf: true
 links-as-notes: true
 csl: "ieee.csl"
@@ -49,6 +44,18 @@ usedefaultspacing: yes
 keywords:
   - reproducibility
 ---
+
+<!--
+  - name: "Ivo Jimenez, Carlos Maltzahn"
+    affiliation: "UC Santa Cruz"
+    email: "`{ivo,carlosm}@cs.ucsc.edu`"
+  - name: "Jay Lofstead"
+    affiliation: "Sandia National Lab"
+    email: "`gflofst@sandia.gov`"
+  - name: "Adam Moody, Kathryn Mohror"
+    affiliation: "Lawrence Livermore National Lab"
+    email: "`{moody20,kathryn}@llnl.gov`"
+-->
 
 # Introduction
 
@@ -105,12 +112,13 @@ definitions introduced by Vitek et al. [@vitek_repeatability_2011]:
 > as data sets, published via scientific data repositories or provided 
 > by the authors on inquiry_.
 
-An experiment can be seen as composed by (1) its execution and (2) the 
-validation of the results. From the above definitions, we notice that 
-the _repeatable_ and _reproducibility_ qualifiers apply to both. We 
-treat re-execution and validation separately since it facilitates the 
-discussion and makes it easer to identify the missing pieces in terms 
-of a generic, systematic approach to reproducibility.
+The reproduction of an experiment can be seen as composed by (1) its 
+execution and (2) the validation of the results. From the above 
+definitions, we notice that the _repeatable_ and _reproducibility_ 
+qualifiers apply to both. We treat re-execution and validation 
+separately since it facilitates the discussion and makes it easer to 
+identify the missing pieces in terms of a generic, systematic approach 
+to reproducibility.
 
 Regarding experiment re-execution, the line that divides repeatability 
 from reproducibility can be subjective; from the definition of 
@@ -208,59 +216,63 @@ presentation of the experimental evaluation of a system.
 # Experiment Specification Format {#sec:format}
 
 An experiment specification format (ESF) allows a scientist to 
-explicitly capture the high-level structure of an experiment. An 
-example in the JSON file format is shown below. The example 
-corresponds to a simplified version of the specification of an 
+explicitly and declaratively capture the high-level structure of an 
+experiment. An example in the JSON file format is shown below. The 
+example corresponds to a simplified version of the specification of an 
 already-published article ([see\ ](#sec:case)). We describe each 
 section of the ESF next.
 
 ~~~{.json .numberLines}
 {
-"goal_location": {"sec":"6.1", "par":5},
-"goal_text": "demonstrate that Ceph
-  scales linearly with size of cluster",
-"goal_category": ["proof"],
-"experiments":[ {
- "reference":"figure-8",
- "name":"scalability experiment",
- "tags":["throughput"],
- "hardware_dependencies": [ {
-    "type": "hdd",
-    "bw": "58MB/s"
- }],
- "software_dependencies": [ {
-   "type": "os",
-   "kernel": "linux 2.6.32",
-   "distro": "debian 6.0"
- }, {
-   "type": "storage",
-   "name": "ceph",
-   "version": "0.1.67"
- }],
- "independent_variables": [
- {
-   "type": "method",
-   "values": ["raw", "ceph"],
-   "desc": "raw corresponds to
-     hdd raw BW performance"
- }, {
-   "type": "size",
-   "values": ["2-24", 2]
- }],
- "dependent_variable": {
-   "type":  "throughput",
-   "scale": "mb/s"
- },
- "statistical_functions": {
-   "functions": ["avg", "stddev"],
-   "repetitions": 10
- },
- "validations": [
-   "for
-      size=*
-    expect
-      ceph >= (raw * 0.9)"
-]}]}
+  "goal_location": {
+     "sec": "6.1",
+     "par": 5
+  },
+  "goal_text": "demonstrate that Ceph scales
+     linearly with the size of the cluster",
+  "goal_category": ["proof"],
+  "experiments":[ {
+     "reference":"figure-8",
+     "name":"scalability experiment",
+     "tags":["throughput"],
+     "hardware_dependencies": [{
+        "type": "hdd",
+        "bw": "58MB/s"
+     }],
+     "software_dependencies": [{
+       "type": "os",
+       "kernel": "linux 2.6.32",
+       "distro": "debian 6.0"
+     }, {
+       "type": "storage",
+       "name": "ceph",
+       "version": "0.1.67"
+     }],
+     "independent_variables": [{
+       "type": "method",
+       "values": ["raw", "ceph"],
+       "desc": "raw corresponds to
+         hdd raw BW performance"
+     }, {
+       "type": "size",
+       "values": ["2-24", 2]
+     }],
+     "dependent_variable": {
+       "type":  "throughput",
+       "scale": "mb/s"
+     },
+     "statistical_functions": {
+       "functions": ["avg", "stddev"],
+       "repetitions": 10
+     },
+     "validations": [
+       "for
+          size=*
+        expect
+          ceph >= (raw * 0.9)"
+     ]
+  }]
+}
 ~~~
 
 ## Experiment Goals {#sec:goals}
@@ -369,35 +381,35 @@ repetitions of the experiment.
 
 We propose using a domain specific language (DSL) for codifying 
 observations. Such a language provides an author with a mechanism to 
-succinctly write high-level statements that can be used to test for 
+succinctly write declarative statements that can be used to test for 
 reproducibility. The simplified syntax for the language is the 
 following:
 
 ```yaml
-validation
- : 'for' condition ('and' condition)*
-   'expect' result ('and' result)*
- ;
-condition
- : vars ('in' range)
- | vars ('='|'<'|'>'|'!=') value
- ;
-result
- : condition
- ;
-vars
- : var (',' var)*
- ;
-range
- : 'between' value 'and' value
- | '[' value (',' value)* ']'
- ;
-value
- : '*' | NUMBER | var '*' NUMBER
- ;
-var
- : STRING
- ;
+  validation
+   : 'for' condition ('and' condition)*
+     'expect' result ('and' result)*
+   ;
+  condition
+   : vars ('in' range)
+   | vars ('='|'<'|'>'|'!=') value
+   ;
+  result
+   : condition
+   ;
+  vars
+   : var (',' var)*
+   ;
+  range
+   : 'between' value 'and' value
+   | '[' value (',' value)* ']'
+   ;
+  value
+   : '*' | NUMBER | var '*' NUMBER
+   ;
+  var
+   : STRING
+   ;
 ```
 
 The statements constructed via this DSL refer to elements on the 
@@ -410,34 +422,34 @@ the performance of them while varying the number of worker threads.
 The schema for such an experiment might be the following:
 
 ```json
-{
-  "independent_variables": [ {
-    "type": "method",
-    "values": ["baseline", "mine"]
-  }, {
-    "type": "threads",
-    "values": ["2", "4", "8", "16"]
-  }],
-  "dependent_variable": {
-    "type":  "throughput",
-    "scale": "ops/s"
+  {
+    "independent_variables": [ {
+      "type": "method",
+      "values": ["baseline", "mine"]
+    }, {
+      "type": "threads",
+      "values": ["2", "4", "8", "16"]
+    }],
+    "dependent_variable": {
+      "type":  "throughput",
+      "scale": "ops/s"
+    }
   }
-}
 ```
 
 A statement for this experiment might be:
 
 ```sql
-for
-  threads > 4
-expect
-  mine = (10 * baseline)
+  for
+    threads > 4
+  expect
+    mine = (10 * baseline)
 ```
 
 In prose form, the above describes that when the number of worker 
-threads goes beyond 4, **`mine`** outperforms **`baseline`** by an 
-order of magnitude. When re-executing this experiment, the data should 
-reflect this behavior in order to validate the results.
+threads goes beyond 4, `mine` outperforms `baseline` by an order of 
+magnitude. When re-executing this experiment, the data should reflect 
+this behavior in order to validate the results.
 
 # Case Study {#sec:case}
 
@@ -461,12 +473,6 @@ network switch is saturated. This linear scalability is the validation
 criteria for this experiment and thus what we would like to capture in 
 the specification.
 
-![Reprinting Figure 8 from the original paper. The original caption 
-reads: "_object storage device (OSD) write performance scales linearly 
-with the size of the OSD cluster until the switch is saturated at 24 
-OSDs. CRUSH and hash performance improves when more PGs lower variance 
-in OSD utilization_."](figures/figure8.png)
-
 The experiment used 4 MB objects to minimize random I/O noise from the 
 hard drives. We ignore the performance of the `hash` data distribution 
 and increase the number of placement groups to 128 per node, thus we 
@@ -483,6 +489,12 @@ capacity of approximately 14 GbE in _real_ total traffic (from a 20
 advertised), corresponding to the 24 * 58 = 1400 MB/s combined 
 throughput shown in the original paper.
 
+![Reprinting Figure 8 from the original paper. The original caption 
+reads: "_object storage device (OSD) write performance scales linearly 
+with the size of the OSD cluster until the switch is saturated at 24 
+OSDs. CRUSH and hash performance improves when more PGs lower variance 
+in OSD utilization_."](figures/figure8.png)
+
 We scaled down the experiment by reducing the number of client nodes 
 to 1 (running 16 client threads). This means that our network upper 
 bound is approximately 110 MB/s (the capacity of the 1GbE link from 
@@ -492,28 +504,21 @@ Figure 3 shows results of this scaled-down, throttled version of the
 scalability experiment.
 
 [^throttle]: We throttle I/O with the purpose of slowing down the 
-experiment. The hard drive used for the reproduced experiment can 
+experiment. The hard drives used for the reproduced experiment can 
 perform at 120 MB/s which would saturate the network link rapidly.
-
-![Reproducing a scaled-down version of the original OSDI '06 
-scalability experiment. The x-axis corresponds to the size of the 
-cluster (in number of OSDs). The y-axis represents normalized 
-throughput (to meaningfully compare against original results) w.r.t. 
-the raw performance of the hard disk drives in the cluster. The red 
-line corresponds to the original results and the green line to the one 
-generated by the re-execution of the experiment.](figures/ceph.png)
 
 We see that Ceph scales linearly with the number of OSDs, up to the 
 point where we saturate the 1GbE link of the client (at 8 OSDs). The 
 sample experiment specification shown earlier ([](#sec:format)) 
 corresponds to this experiment. The validation clause in lines 42-47 
 specifies the reproducibility criteria for this experiment. As can be 
-noted, this is independent of the particularities of the experiment 
-setup. Even though our setup is significantly different from the 
-original[^setup], we are able to reproduce the results since we 
-validate the results on the basis of the experiment goal, schema of 
-the output data and validation clauses, which in turn are expressed as 
-relative rather than absolute throughput measurements.
+noted, this is where the declarative nature of the specification 
+stands out since the validation is independent of the particularities 
+of the means of each experiment. Even though the recreated environment 
+is significantly different from the original[^setup], we are able to 
+reproduce the results by validating on the basis of the experiment 
+goal, schema of the output and validation clauses (which in turn are 
+expressed as relative rather than absolute throughput measurements).
 
 [^setup]: Besides scaling down and throttling I/O, the specifications 
 of the underlying hardware are significantly different. The original 
@@ -527,9 +532,36 @@ experiments, a Netgear GS748T. The complete platform specs are
 contained in the repository associated to this paper 
 <https://github.com/ivotron/socc15>
 
+![Reproducing a scaled-down version of the original OSDI '06 
+scalability experiment. The x-axis corresponds to the size of the 
+cluster (in number of OSDs). The y-axis represents normalized 
+throughput (to meaningfully compare against original results) w.r.t. 
+the raw performance of the hard disk drives in the cluster. The red 
+line corresponds to the original results and the green line to the one 
+generated by the re-execution of the experiment.](figures/ceph.png)
+
 # Discussion
 
 We discuss several aspects of our proposal.
+
+## Usability
+
+Given that the high-level components abstract a large number of 
+experiments that people usually implement in the systems literature, 
+and since this is what a researcher usually goes through anyway, 
+creating the specification for an experiment represents little extra 
+effort, with the exception of including information about the means of 
+the experiment which, as we mentioned before ([](#sec:means)), it is a 
+task that can be automated using tools that are currently available.
+
+## Integration into Existing Infrastructure
+
+Experimental platforms such as CloudLab [@ricci_introducing_2014] can 
+incorporate the notion of _execution_ so that for every experiment a 
+record of executions is maintained. For each execution, the means 
+section of the ESF can be automatically populated. Validation 
+statements can also provide another testability layer for continuous 
+integration (CI) systems such as Jenkins.
 
 ## Codified Observations As Falsifiable Statements
 
@@ -586,7 +618,7 @@ experiments:
 
 > Author 3: _This approach helps to find meaningful baselines. 
 > Reporting raw numbers in figures and observations makes it harder to 
-> validate results. Specifying validation clauses in respective to 
+> validate results. Specifying validation clauses respective to 
 > baselines and normalized values makes it easier to report 
 > reproducible results_.
 
@@ -594,15 +626,6 @@ In general, we have noticed that the exercise of explicitly specifying
 the validation criteria creates a feedback loop in an author's mind 
 that results in insightful ideas when it comes to experiment design, 
 baseline selection and validation criteria.
-
-## Integration into Existing Infrastructure
-
-Experimental platforms such as CloudLab [@ricci_introducing_2014] can 
-incorporate the notion of _execution_ so that for every experiment a 
-record of executions is maintained. For each execution, the means 
-section of the ESF can be automatically populated. Validation 
-statements can also provide another testability layer for continuous 
-integration (CI) systems such as Jenkins.
 
 # Conclusion and Future Work
 
