@@ -1,9 +1,15 @@
 ---
 title: "Tackling the Reproducibility Problem in Systems Research with Declarative Experiment Specifications"
 author:
-  - name: "Ivo Jimenez"
+  - name: "Ivo Jimenez, Carlos Maltzahn"
     affiliation: "UC Santa Cruz"
-    email: "`ivo@cs.ucsc.edu`"
+    email: "`{ivo,carlosm}@cs.ucsc.edu`"
+  - name: "Jay Lofstead"
+    affiliation: "Sandia National Lab"
+    email: "`gflofst@sandia.gov`"
+  - name: "Adam Moody, Kathryn Mohror"
+    affiliation: "Lawrence Livermore National Lab"
+    email: "`{moody20,kathryn}@llnl.gov`"
 abstract: |
   Validating experimental results in the field of computer systems is 
   a challenging task, mainly due to the many changes in software and 
@@ -44,18 +50,6 @@ usedefaultspacing: yes
 keywords:
   - reproducibility
 ---
-
-<!--
-  - name: "Ivo Jimenez, Carlos Maltzahn"
-    affiliation: "UC Santa Cruz"
-    email: "`{ivo,carlosm}@cs.ucsc.edu`"
-  - name: "Jay Lofstead"
-    affiliation: "Sandia National Lab"
-    email: "`gflofst@sandia.gov`"
-  - name: "Adam Moody, Kathryn Mohror"
-    affiliation: "Lawrence Livermore National Lab"
-    email: "`{moody20,kathryn}@llnl.gov`"
--->
 
 # Introduction
 
@@ -113,15 +107,15 @@ definitions introduced by Vitek et al. [@vitek_repeatability_2011]:
 > by the authors on inquiry_.
 
 The reproduction of an experiment can be seen as composed by (1) its 
-execution and (2) the validation of the results. From the above 
-definitions, we notice that the _repeatable_ and _reproducibility_ 
-qualifiers apply to both. We treat re-execution and validation 
+execution and (2) the validation of the results. Colloquially, these 
+two tasks are conflated when designating an experiment as 
+reproducible. In our case, we treat re-execution and validation 
 separately since it facilitates the discussion and makes it easer to 
 identify the missing pieces in terms of a generic, systematic approach 
 to reproducibility.
 
-Regarding experiment re-execution, the line that divides repeatability 
-from reproducibility can be subjective; from the definition of 
+Regarding re-execution, the line that divides repeatability from 
+reproducibility can be subjective; from the definition of 
 repeatability, the phrase _exact same experiment with the same method 
 on the same or similar system_ can be a source of debate. To minimize 
 confusion, we concretize it by defining repeatability w.r.t. the 
@@ -228,8 +222,8 @@ section of the ESF next.
      "sec": "6.1",
      "par": 5
   },
-  "goal_text": "demonstrate that Ceph scales
-     linearly with the size of the cluster",
+  "goal_text": "demonstrate that Ceph scales linearly
+     with the size of the cluster",
   "goal_category": ["proof"],
   "experiments":[ {
      "reference":"figure-8",
@@ -251,8 +245,8 @@ section of the ESF next.
      "independent_variables": [{
        "type": "method",
        "values": ["raw", "ceph"],
-       "desc": "raw corresponds to
-         hdd raw BW performance"
+       "desc": "raw corresponds to hdd sequential write
+          performance, expressed in MB/s"
      }, {
        "type": "size",
        "values": ["2-24", 2]
@@ -266,10 +260,8 @@ section of the ESF next.
        "repetitions": 10
      },
      "validations": [
-       "for
-          size=*
-        expect
-          ceph >= (raw * 0.9)"
+       "for    size=*
+        expect ceph >= (raw * 0.9)"
      ]
   }]
 }
@@ -440,10 +432,8 @@ The schema for such an experiment might be the following:
 A statement for this experiment might be:
 
 ```sql
-  for
-    threads > 4
-  expect
-    mine = (10 * baseline)
+  for    threads > 4
+  expect mine = (10 * baseline)
 ```
 
 In prose form, the above describes that when the number of worker 
