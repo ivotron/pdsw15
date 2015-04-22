@@ -166,22 +166,22 @@ of the original work that is agnostic to the means of the experiment.
 We propose to take experiment goals as the basis for validation and 
 treat observations in the context of these goals.
 
-# Goals, Means and Observations
+# Goals, Means and Observations {#sec:goals-means-obs}
 
 The high-level structure of an experiment can be described as having 
 five components: goals, means, output data, result visualizations and 
 observations (Figure 1). An experiment is designed with a particular 
-goal in mind. For example, under certain circumstances a new system or 
-algorithm could improve the state-of-the-art by an order of magnitude. 
-The means of the experiment, as we mentioned, are the particularities 
-of how the experimental environment and procedures are carried out. As 
-part of the experiment execution, metrics are collected that are 
-dumped into an output dataset. This raw data can optionally be 
-summarized (e.g. with statistical descriptors) before being displayed 
-in a figure and described in the form of observations made in the 
-prose of the article. The observations that are made about the 
-properties of the output data are the basis on which an author proves 
-and corroborates the hypothesis of her work.
+**goal** in mind. For example, to show that under certain 
+circumstances a new system or algorithm improves the state-of-the-art 
+by an order of magnitude. The **means of the experiment**, as we 
+mentioned, are the particularities of how the experimental environment 
+and procedures are carried out. As part of the experiment execution, 
+metrics are collected that are dumped into an output dataset. This raw 
+data can optionally be summarized (e.g. with statistical descriptors) 
+before being displayed in a figure and described in the form of 
+observations made in the prose of the article. The **observations** 
+that are made about the properties of the output data are the basis on 
+which an author proves and corroborates the hypothesis of her work.
 
 ![High-level structure of an experiment.](figures/goals.png)
 
@@ -200,12 +200,12 @@ and observations that are discussed in the article. In other words, it
 enables the author to provide a description of the design of an 
 experiment and its means of execution as well as the expected 
 observations that validate the author's claims. Such a description 
-serves two purposes. On the one hand, a reviewer or reader that has 
-access to this description can, on her own, validate the original work 
-by testing whether the original observations hold on the re-generated 
-output data. On the other, the explicit specification of these 
-high-level elements aid an author in enhancing the design and 
-presentation of the experimental evaluation of a system.
+serves two purposes. First, a reviewer or reader that has access to 
+this description can, on her own, validate the original work by 
+testing whether the original observations hold on the re-generated 
+output data. Secondly, the explicit specification of these high-level 
+elements aid an author in enhancing the design and presentation of the 
+experimental evaluation of a system.
 
 # Experiment Specification Format {#sec:format}
 
@@ -374,9 +374,9 @@ repetitions of the experiment.
 
 ## Observations and Validation Clauses {#sec:validation}
 
-We propose using a domain specific language (DSL) for codifying 
-observations. Such a language provides an author with a mechanism to 
-succinctly write declarative statements that can be used to test for 
+We propose using a declarative language for codifying observations. 
+Such a language provides an author with a mechanism to succinctly 
+write descriptive statements that can be used to test for 
 reproducibility. The simplified syntax for the language is the 
 following:
 
@@ -407,7 +407,7 @@ following:
    ;
 ```
 
-The statements constructed via this DSL refer to elements on the 
+The statements constructed via this language refer to elements on the 
 schema of the output data. In other words, the schema specification 
 that precedes the `validations` section of the ESF introduces 
 syntactic elements into the language that provide an easy way to write 
@@ -505,14 +505,15 @@ We see that Ceph scales linearly with the number of OSDs, up to the
 point where we saturate the 1GbE link of the client (at 8 OSDs). The 
 sample experiment specification shown earlier ([](#sec:format)) 
 corresponds to this experiment. The validation clause in lines 46-48 
-specifies the reproducibility criteria for this experiment. As can be 
-noted, this is where the declarative nature of the specification 
-stands out since the validation is independent of the particularities 
-of the means of each experiment. Even though the recreated environment 
-is significantly different from the original,[^setup] we are able to 
-reproduce the results by validating on the basis of the experiment 
-goal, schema of the output and validation clauses (which in turn are 
-expressed as relative rather than absolute throughput measurements).
+specifies the reproducibility criteria for this experiment.[^netio] As 
+can be noted, this is where the declarative nature of the 
+specification stands out since the validation is independent of the 
+particularities of the means of each experiment. Even though the 
+recreated environment is significantly different from the 
+original,[^setup] we are able to reproduce the results by validating 
+on the basis of the experiment goal, schema of the output and 
+validation clauses (which in turn are expressed as relative rather 
+than absolute throughput measurements).
 
 [^setup]: Besides scaling down and throttling I/O, the specifications 
 of the underlying hardware are significantly different. The original 
@@ -526,6 +527,10 @@ experiments, a Netgear GS748T. The complete platform specs are
 contained in the repository associated to this paper 
 <https://github.com/ivotron/socc15>
 
+[^netio]: An additional clause might capture the fact that the 
+scalability behavior is seen until the network bandwidth is saturated. 
+For example `for size > 24 expect ceph < raw`.
+
 ![Reproducing a scaled-down version of the original OSDI '06 
 scalability experiment. The x-axis corresponds to the size of the 
 cluster (in number of OSDs). The y-axis represents normalized 
@@ -536,16 +541,14 @@ generated by the re-execution of the experiment.](figures/ceph.png)
 
 # Discussion
 
-We discuss several aspects of our proposal.
-
 ## Usability
 
-Given that the high-level components abstract a large number of 
-experiments that people usually implement in the systems literature, 
-and since this is what a researcher usually goes through anyway, 
-creating the specification for an experiment represents little extra 
-effort, with the exception of including information about the means of 
-the experiment which, as we mentioned before ([](#sec:means)), it is a 
+Given that the high-level components ([](#sec:goals-means-obs)) 
+abstract a large number of experiments that people usually implement 
+in the systems literature, and since this is what a researcher usually 
+goes through anyway, creating the specification for an experiment 
+represents little extra effort. The exception being the means of the 
+experiment which, as we mentioned before ([](#sec:means)), it is a 
 task that can be automated using tools that are currently available.
 
 ## Integration into Existing Infrastructure
@@ -560,9 +563,9 @@ integration (CI) systems such as Jenkins.
 ## Codified Observations As Falsifiable Statements
 
 Validation clauses serve to succinctly codify observations. Given the 
-way that the DSL is designed, validation ranges have to be provided 
-for each observation so that it can be tested. This has the 
-implication of turning observations into falsifiable statements 
+way that the descriptive language is designed, validation ranges have 
+to be provided for each observation so that it can be tested. This has 
+the implication of turning observations into falsifiable statements 
 [@popper_logic_2002]. These validation clauses are conditions that 
 should hold in order to corroborate the conclusions of the paper. In 
 other words, if the means of the experiment are properly recreated, 
@@ -619,7 +622,18 @@ experiments:
 In general, we have noticed that the exercise of explicitly specifying 
 the validation criteria creates a feedback loop in an author's mind 
 that results in insightful ideas when it comes to experiment design, 
-baseline selection and validation criteria.
+baseline selection and validation criteria. Additionally, the point of 
+view of the author is explicitly expressed; usually, figures contain 
+more information than what the author needs in order to back a claim, 
+which might lead readers to draw other conclusions. Lastly, every 
+article has an implicit temporal context associated to it that the 
+reader has to keep in mind, for example, the bottleneck at the time 
+that an article was published might be in storage devices (e.g. hard 
+disk drives) while at other times they might have moved to the network 
+instead (e.g. because of the availability of faster storage devices 
+such as SSDs). A possibility would be to create a knowledge base that 
+an author can link the paper to so that a semantic context is 
+available to the reader.
 
 # Related Work {#sec:related}
 
@@ -667,6 +681,10 @@ already-published experiments and analyze them to check if they
 capture the appropriate validation criteria. While we envision our 
 findings to be applicable in the area of systems research, we plan to 
 evaluate its suitability on other areas of computer science.
+
+**Acknowledgements:** This work was performed under the auspices of 
+the U.S. Department of Energy by Lawrence Livermore National 
+Laboratory under Contract DE-AC52-07NA27344. LLNL-CONF-669866-DRAFT.
 
 # References
 
