@@ -1,4 +1,5 @@
 *.sw?
 out/
 .DS_Store
+build.log
 pandoc.log

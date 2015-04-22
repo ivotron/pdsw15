@@ -11,4 +11,13 @@ docker run \
   ivotron/pandoc:1.13.2 \
     --highlight-style tango \
     --filter pandoc-citeproc \
-    --output=out/main.pdf main.pdc 2> pandoc.log
+    --output=out/main.pdf main.pdc 2> build.log
+
+if [ $? != "0" ] ; then
+  echo "ERROR: check build.log for details"
+  exit 1
+fi
+
+echo "SUCCESS: check out/ folder for output"
+
+exit 0
