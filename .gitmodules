@@ -1,18 +1,18 @@
 [submodule "bibfile"]
 	path = vendor/bibfile
-	url = git@github.com:ivotron/bibfile.git
+	url = https://github.com/ivotron/bibfile.git
 [submodule "bibtools"]
 	path = vendor/bibtools
-	url = git@github.com:ivotron/bibtools.git
+	url = https://github.com/ivotron/bibtools.git
 [submodule "pandoc-templates"]
 	path = vendor/pandoc-templates
-	url = git@github.com:ivotron/pandoc-templates
+	url = https://github.com/ivotron/pandoc-templates
 [submodule "latex-files"]
 	path = vendor/latex-files
-	url = git@github.com:ivotron/latex-files
+	url = https://github.com/ivotron/latex-files
 [submodule "vendor/docker-pandoc"]
 	path = vendor/docker-pandoc
-	url = git@github.com:ivotron/docker-pandoc
+	url = https://github.com/ivotron/docker-pandoc
 [submodule "vendor/ceph_osdi06"]
 	path = vendor/ceph_osdi06
-	url = git@github.com:ivotron/ceph_osdi06
+	url = https://github.com/ivotron/ceph_osdi06
