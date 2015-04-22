@@ -185,14 +185,6 @@ which an author proves and corroborates the hypothesis of her work.
 
 ![High-level structure of an experiment.](figures/goals.png)
 
-<!--
-  * Do we need to provide examples?
-  * Do we need to talk more about the schema of the raw data? E.g. 
-    "These descriptions make reference to elements from the metadata 
-    of the raw output data (i.e. the schema of the raw data), for 
-    example, the average throughput is 10x better than the baseline".
--->
-
 The use of declarative formats provides a researcher a way of 
 expressing, in a high-level manner, the relationship between the goals 
 and means of an experiment, the raw data it produces, and the figures 
@@ -320,38 +312,6 @@ of dependencies for the experiment, used only to illustrate the type
 of information that is captured in this section. A real example would 
 be more comprehensive, potentially relying on tools that obtain this 
 information [automatically](https://github.com/sosreport/sos).
-
-<!--
-
-The components of an experiment:
-
-  * Hardware
-  * Virtualization
-  * OS
-  * Configuration. OS resources made available to the experiment.
-  * Code
-  * Data
-  * Workload
-  * Non-determinism. Concurrency level, node placement, degree of 
-    consolidation (how many other users are in my same node), etc.
-
-For example, if the re-execution of an experiment that employs a 
-pseudo-random number generator uses a different seed than the 
-originally experiment, we can't consider this a repetition of the 
-experiment, mainly due to the non-determinism introduced by the 
-platform.
-
-Another, example is the following: For example, if an experiment 
-originally ran on EC2 at peak hours and now is executing at non-peak 
-hours, we can't consider this a repetition of the experiment, mainly 
-due to the non-determinism introduced by the platform.
-
-Another example: if the re-execution of an experiment hosted on 
-CloudLab gets assigned with distinct bare-metal resources w.r.t. the 
-original execution, it's not a repetition; the underlying resources 
-might have changed (e.g. moonshot vs. other type of chassis).
-
--->
 
 ## Schema of Raw Data {#sec:schema}
 
