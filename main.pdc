@@ -12,7 +12,7 @@ author:
     email: "`{moody20,kathryn}@llnl.gov`"
   - name: "Remzi Arpaci-Dusseau, Andrea Arpaci-Dusseau"
     affiliation: "UW Madison"
-    email: "`{dusseau,remzi}@cs.wisc.edu`"
+    email: "`{remzi,dusseau}@cs.wisc.edu`"
 abstract: |
   Validating experimental results in the field of computer systems is 
   a challenging task, mainly due to the many changes in software and 
@@ -51,7 +51,7 @@ csl: "ieee.csl"
 bibliography: "citations.bib"
 usedefaultspacing: yes
 keywords:
-  - reproducibility
+  - Reproducibility
 categories:
   - category: "D.3.2"
     subcategory: "Language Classifications"
@@ -74,6 +74,8 @@ can learn by looking at provenance information, re-evaluate the
 questions that the original experiment answered and thus "stand on the 
 shoulder of giants".
 
+The issue of reproducibility in applied computer science has recently 
+been the focus of considerable attention by the academic community. 
 The role of computers in new scientific discoveries has only increased 
 and will continue. Coupled with this, the advent of cloud computing 
 offers new opportunities for experiment validation. Cloud computing 
@@ -417,15 +419,6 @@ in the repository associated to this paper
 <https://github.com/ivotron/socc15>
 */
 ```
-
-<!--
-I'd then be very clear about how to specify your goal: if you just
-look at scalability without bottlenecks, you can say "expect cep >=
-raw*0.9"; if you have a naive understanding of scalability you can say
-"for size > 24 expect...".   But, your challenge is to have a
-constraint that expresses "when the switch is saturated" instead of
-just "size > 24"...
--->
 
 The (simplified) specification shown earlier ([](#sec:format)) 
 corresponds to this experiment. Without paying attention to 
