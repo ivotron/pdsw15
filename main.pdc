@@ -10,14 +10,17 @@ author:
   - name: "Adam Moody, Kathryn Mohror"
     affiliation: "Lawrence Livermore National Lab"
     email: "`{moody20,kathryn}@llnl.gov`"
+  - name: "Remzi Arpaci-Dusseau, Andrea Arpaci-Dusseau"
+    affiliation: "UW Madison"
+    email: "`{dusseau,remzi}@cs.wisc.edu`"
 abstract: |
   Validating experimental results in the field of computer systems is 
   a challenging task, mainly due to the many changes in software and 
   hardware that computational environments go through. Determining if 
   an experiment is reproducible entails two separate tasks: 
   re-executing the experiment and validating the results. Existing 
-  reproducibility efforts have focused in the former, envisioning 
-  techniques and infrastructures that makes it easier to re-execute an 
+  reproducibility efforts have focused on the former, envisioning 
+  techniques and infrastructures that make it easier to re-execute an 
   experiment. In this work we focus on the latter by analyzing the 
   validation workflow that an experiment re-executioner goes through. 
   We notice that validating results is done on the basis of experiment 
@@ -68,12 +71,10 @@ replicate previous experiments. Registering detailed information about
 how an experiment was carried out allows scientists to interpret and 
 understand results, as well as verify that the experiment was 
 performed according to acceptable procedures. Additionally, 
-reproducibility plays a major role in education since the amount of 
-information that a student has to digest increases as the pace of 
-scientific discovery accelerates. By having the ability to reproduce 
-experiments, a student can learn by looking at provenance information, 
-re-evaluate the questions that the original experiment answered and 
-thus "stand on the shoulder of giants".
+reproducibility plays a major role in education since by having the 
+ability to reproduce experiments, a student can learn by looking at 
+provenance information, re-evaluate the questions that the original 
+experiment answered and thus "stand on the shoulder of giants".
 
 In applied computer science an experiment is carried out in its 
 entirety on a computer. Thus, in principle, a well documented 
@@ -180,20 +181,21 @@ treat observations in the context of these goals.
 # Goals, Means, and Observations {#sec:goals-means-obs}
 
 The high-level structure of an experiment can be described as having 
-three components: goals, means, and observations. Two additional transient
-components, output data and result visualizations, are created as part of
-running the experiment and are used as a basis for observations (Figure 1). An
-experiment is designed with a particular **goal** in mind. For example, to show
-that under certain circumstances, a new system or algorithm improves the
-state-of-the-art by an order of magnitude. The **means** of the experiment, as
-we mentioned, are the particularities of how the experimental environment 
+three components: goals, means, and observations. Two additional 
+transient components, output data and result visualizations, are 
+created as part of running the experiment and are used as a basis for 
+observations (Figure 1). An experiment is designed with a particular 
+**goal** in mind. For example, to show that under certain 
+circumstances, a new system or algorithm improves the state-of-the-art 
+by an order of magnitude. The **means** of the experiment, as we 
+mentioned, are the particularities of how the experimental environment 
 and procedures are carried out. As part of the experiment execution, 
-metrics are collected into an output dataset. This raw 
-data can optionally be summarized (e.g., with statistical descriptors) 
-before being displayed in a figure and described in the form of 
-observations made in the prose of the article. The **observations** 
-made about the output data properties are the basis on 
-which an author proves and corroborates the hypothesis of her work.
+metrics are collected into an output dataset. This raw data can 
+optionally be summarized (e.g., with statistical descriptors) before 
+being displayed in a figure and described in the form of observations 
+made in the prose of the article. The **observations** made about the 
+output data properties are the basis on which an author proves and 
+corroborates the hypothesis of her work.
 
 ![High-level structure of an experiment.](figures/goals.png)
 
@@ -324,7 +326,7 @@ the example, this corresponds to lines 13-28 This is a simplified list
 of dependencies for the experiment, used only to illustrate the type 
 of information that is captured in this section. A real example would 
 be more comprehensive, potentially relying on tools that obtain this 
-information [automatically](https://github.com/sosreport/sos).
+information.[automatically](https://github.com/sosreport/sos)
 
 ## Schema of Raw Data {#sec:schema}
 
@@ -621,7 +623,8 @@ such as _The Recomputation Manifesto_ [@gent_recomputation_2013] and
 the _Software Sustainability Institute_ [@crouch_software_2013] have 
 reproducibility as a central part of their endeavour but leave 
 performance as a secondary problem. In systems research, performance 
-_is_ the subject of study, thus we need to look it as a primary issue.
+_is_ the subject of study, thus we need to look at it as a primary 
+issue.
 
 In [@collberg_repeatability_2015] the authors took 601 articles 
 published in 13 top-tier systems research conferences and found that 
