@@ -49,6 +49,16 @@ bibliography: "citations.bib"
 usedefaultspacing: yes
 keywords:
   - reproducibility
+categories:
+  - category: "D.3.2"
+    subcategory: "Language Classifications"
+    third: "Very high-level languages"
+  - category: "D.4.m"
+    subcategory: "Operating Systems"
+    third: "Miscellaneous"
+  - category: "K.7.3"
+    subcategory: "The Computing Profession"
+    third: "General"
 ---
 
 # Introduction
