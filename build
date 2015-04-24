@@ -14,18 +14,6 @@ docker run \
     --filter pandoc-citeproc \
     --output=out/main.pdf main.pdc 2> build.log
 
-#docker run \
-#  --rm \
-#  --workdir="/root" \
-#  --entrypoint=/usr/bin/pdflatex \
-#  -v `pwd`/vendor/latex-files:/root/texmf/tex/latex \
-#  -v `pwd`/figures:/root/figures \
-#  -v `pwd`/out:/root/out \
-#  -v `pwd`/main.tex:/root/main.tex \
-#  ivotron/pandoc:1.13.2 \
-#    -output-directory=out/ main.tex
-#
-
 if [ $? != "0" ] ; then
   echo "ERROR: check build.log for details"
   exit 1
