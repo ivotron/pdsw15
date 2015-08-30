@@ -1,5 +1,5 @@
 ---
-title: "Tackling the Reproducibility Problem in Systems Research with Declarative Experiment Specifications"
+title: "Tackling the Reproducibility Problem in Storage Systems Research with Declarative Experiment Specifications"
 author:
   - name: "Ivo Jimenez, Carlos Maltzahn"
     affiliation: "UC Santa Cruz"
@@ -14,7 +14,7 @@ author:
     affiliation: "UW Madison"
     email: "`{remzi,dusseau}@cs.wisc.edu`"
 abstract: |
-  Validating experimental results in the field of computer systems is 
+  Validating experimental results in the field of storage systems is 
   a challenging task, mainly due to the many changes in software and 
   hardware that computational environments go through. Determining if 
   an experiment is reproducible entails two separate tasks: 
@@ -28,10 +28,10 @@ abstract: |
   Based on this insight, we introduce a declarative format for 
   specifying the high-level components of an experiment as well as 
   describing generic, testable conditions that serve as the basis for 
-  validation. We present a use case in the area of storage systems to 
-  illustrate the usefulness of this approach. We also discuss 
-  limitations and potential benefits of using this approach in other 
-  areas of experimental systems research.
+  validation. We present a use case in the area of distributed storage 
+  systems to illustrate the usefulness of this approach. We also 
+  discuss limitations and potential benefits of using this approach in 
+  other areas of experimental systems research.
 tags:
   - vision-paper
   - socc15
@@ -117,19 +117,16 @@ focus is reproducibility. Today's computational environments undergo a
 continual stream of changes that make it difficult for an experiment 
 to observe the same state across multiple executions. Version-control 
 systems (VCS) are sometimes used to ease the recreation of an 
-experimental environment. Having a specific version ID for the source 
-code and data associated with an article on a public repository 
-significantly reduces the burden of recreating the means of an 
-experiment [@brown_how_2014]. However, availability of the source code 
-does not guarantee reproducibility [@collberg_repeatability_2015] 
-since the code might not compile and, even if compilable, the 
-resulting program might not generate the same results. Recreating an 
-environment that resembles the one where an experiment was originally 
-executed is a challenging task [@krishnamurthi_real_2015]. 
-Virtualization technologies can play a big role in accomplishing this 
-[@clark_xen_2004 ; @jimenez_role_2015]. In the end, the 
-re-implementation of an experiment has to be audited by experts to 
-confirm that they resemble the original.
+experimental environment [@brown_how_2014]. However, availability of 
+the source code does not guarantee reproducibility 
+[@collberg_repeatability_2015] since the code might not compile and, 
+even if compilable, the resulting program might not generate the same 
+results. Recreating an environment that resembles the one where an 
+experiment was originally executed is a challenging task 
+[@krishnamurthi_real_2015]. Virtualization technologies can play a big 
+role in accomplishing this [@clark_xen_2004 ; @jimenez_role_2015]. In 
+the end, the re-implementation of an experiment has to be audited by 
+experts to confirm that they resemble the original.
 
 The reproduction of an experiment can be seen as being composed of (1) 
 its execution and (2) the validation of the results. Generally, these 
@@ -443,20 +440,30 @@ for this experiment would be:
 ```html
   for    size=*
   expect ceph >= (raw * 0.9)
-  when   network not saturated
+  when   not network_saturated
 ```
 
-To evaluate the feasibility of this validation, we recreated the 
-original environment using the means specified in the `Recreated` 
-column of Table 1. Due to constraints in hardware resources, we had to 
-scale down the experiment by reducing the number of client nodes to 1 
-running 16 client threads and 12 storage nodes. This means that our 
-network upper bound is approximately 110 MB/s (the new network 
-bottleneck), corresponding to the capacity of the 1GbE link from the 
-client to the switch. We throttled I/O to 15 MB/s for each storage 
-node.[^throttle] We used this per-OSD increment as our scaling unit. 
-Figure 3 shows results of this scaled-down, throttled re-execution of 
-the scalability experiment.
+The value of `network_saturated` should come from measures, at 
+runtime, about the network. For example, some switches implement. This 
+illustrates the relationship between validations and metrics: in order 
+to validate a claim about an aspect of a system, properly capturing 
+metrics that sustain the claims is of great importance.
+**TODO**: complete this with the stuff I came up with in the email 
+thread.
+
+**TODO2**: address other comments from reviewers.
+
+To evaluate the feasibility of this particular validation, we 
+recreated the original environment using the means specified in the 
+`Recreated` column of Table 1. Due to constraints in hardware 
+resources, we had to scale down the experiment by reducing the number 
+of client nodes to 1 running 16 client threads and 12 storage nodes. 
+This means that our network upper bound is approximately 110 MB/s (the 
+new network bottleneck), corresponding to the capacity of the 1GbE 
+link from the client to the switch. We throttled I/O to 15 MB/s for 
+each storage node.[^throttle] We used this per-OSD increment as our 
+scaling unit. Figure 3 shows results of this scaled-down, throttled 
+re-execution of the scalability experiment.
 
 [^throttle]: We throttle I/O with the purpose of slowing down the 
 experiment. The hard drives used for the reproduced experiment can 
