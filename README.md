@@ -1,4 +1,4 @@
-# socc15
+# pdsw15
 
 Depends on Docker 1.5+
 
