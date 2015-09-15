@@ -21,17 +21,16 @@ abstract: |
   re-executing the experiment and validating the results. Existing 
   reproducibility efforts have focused on the former, envisioning 
   techniques and infrastructures that make it easier to re-execute an 
-  experiment. In this work we focus on the latter by analyzing the 
-  validation workflow that an experiment re-executioner goes through. 
-  We notice that validating results is done on the basis of experiment 
-  design and high-level goals, rather than exact quantitative metrics. 
-  Based on this insight, we introduce a declarative format for 
-  specifying the high-level components of an experiment as well as 
-  describing generic, testable conditions that serve as the basis for 
-  validation. We present a use case in the area of distributed storage 
-  systems to illustrate the usefulness of this approach. We also 
-  discuss limitations and potential benefits of using this approach in 
-  other areas of experimental systems research.
+  experiment. In this position paper, we focus on the latter by 
+  analyzing the validation workflow that an experiment re-executioner 
+  goes through. We notice that validating results is done on the basis 
+  of experiment design and high-level goals, rather than exact 
+  quantitative metrics. Based on this insight, we introduce a 
+  declarative format for specifying the high-level components of an 
+  experiment as well as describing generic, testable conditions that 
+  serve as the basis for validation. We present a use case in the area 
+  of distributed storage systems to illustrate the usefulness of this 
+  approach.
 tags:
   - vision-paper
   - socc15
@@ -45,6 +44,7 @@ numbersections: true
 documentclass: sigplanconf
 substitute-hyperref: true
 monofont-size: scriptsize
+disable-copyright: true
 twocolumn-longtable: yes
 table-font-size: footnotesize
 sigplanconf: true
@@ -52,18 +52,6 @@ links-as-notes: true
 csl: "ieee.csl"
 bibliography: "citations.bib"
 usedefaultspacing: yes
-keywords:
-  - Reproducibility
-categories:
-  - category: "D.3.2"
-    subcategory: "Language Classifications"
-    third: "Very high-level languages"
-  - category: "D.4.m"
-    subcategory: "Operating Systems"
-    third: "Miscellaneous"
-  - category: "K.7.3"
-    subcategory: "The Computing Profession"
-    third: "General"
 ---
 
 # Introduction
@@ -80,19 +68,14 @@ Given the continuously increasing role that computers play in the
 discovery of new scientific findings, the issue of reproducibility in 
 applied computer science has recently been the focus of considerable 
 attention by the scientific community [@peng_reproducible_2011 ; 
-@vitek_repeatability_2011 ; @collberg_repeatability_2015]. Coupled 
-with this, the advent of cloud computing offers new opportunities for 
-experiment validation. Cloud computing makes it easier to share code 
-and data simplifying collaboration for implementing experiments. While 
-it is becoming easier to collaborate, the same cannot be said about 
-experiment validation. There is a serious lack of tools that help 
-researchers identify when an experiment is reproducible. The goal of 
-our work is to close this gap in the area of systems research and 
-storage systems in particular. In systems research, performance _is_ 
-the subject of study and we need to look at it as a primary issue. As 
-a consequence, repeating an experiment with the expectation of 
-obtaining exact same results is unrealistic; an issue that further 
-complicates the reproducibility problem.
+@vitek_repeatability_2011 ; @collberg_repeatability_2015]. The advent 
+cloud computing makes it easier to share code and data, simplifying 
+collaboration for implementing experiments. While it is becoming 
+easier to collaborate, the same cannot be said about experiment 
+validation. The goal of our work is to close this gap in the area of 
+systems research and storage systems in particular. To complicate the 
+things further, in systems research, performance _is_ the subject of 
+study and we need to look at it as a primary issue.
 
 When discussing reproducibility, the terms _reproducibility_, 
 _repeatability_, _replicability_ and _recomputability_ (among many 
@@ -126,7 +109,7 @@ experiment was originally executed is a challenging task
 [@krishnamurthi_real_2015]. Virtualization technologies can play a big 
 role in accomplishing this [@clark_xen_2004 ; @jimenez_role_2015]. In 
 the end, the re-implementation of an experiment has to be audited by 
-experts to confirm that they resemble the original.
+experts to confirm that it resembles the original.
 
 The reproduction of an experiment can be seen as being composed of (1) 
 its execution and (2) the validation of the results. Generally, these 
@@ -145,9 +128,9 @@ possible from the particular implementation details, i.e., a way of
 testing the validity of the original work that is agnostic to the 
 implementation of the experiment. A potential solution is to have an 
 experiment specification that describes the expected outcome in 
-abstract rather than absolute terms. We propose to take experiment 
-goals as the basis for validation and treat quantitative observations 
-in the context of these goals.
+abstract rather than absolute terms. In this position paper, we 
+propose to take experiment goals as the basis for validation and treat 
+quantitative observations in the context of these goals.
 
 # Goals, Means, and Observations {#sec:goals-means-obs}
 
@@ -179,19 +162,19 @@ properties are the basis on which an author proves and corroborates
 the hypothesis of her work.
 
 A declarative format provides a way to express, at a high-level, the 
-relationship among the goals and means of an experiment, the raw data 
-it produces, and the figures and observations discussed in the 
-article. In other words, it enables the author to provide an 
-experiment design description, its means of execution, and the 
-expected observations that validate the author's claims. Such a 
-description serves two purposes. First, a reviewer or reader with 
-access to this description can, on her own, validate the original work 
-by testing whether the original observations hold on the re-generated 
-output data. Secondly, the explicit specification of these high-level 
-elements aid an author in enhancing the design and presentation of the 
-experimental evaluation of a system by forcing her to think about all 
-aspects of the experiment rather than just generating results for a 
-paper.
+rationale behind the experiment design, its means of execution, and 
+the expected observations that validate the author's claims.
+
+<!--
+Such a description serves two purposes. First, a reviewer or reader 
+with access to this description can, on her own, validate the original 
+work by testing whether the original observations hold on the 
+re-generated output data. Secondly, the explicit specification of 
+these high-level elements aid an author in enhancing the design and 
+presentation of the experimental evaluation of a system by forcing her 
+to think about all aspects of the experiment rather than just 
+generating results for a paper.
+-->
 
 # Experiment Specification Format {#sec:format}
 
@@ -200,6 +183,44 @@ explicitly and declaratively capture an experiment's high-level
 structure. An example JSON file is shown below. It corresponds to a 
 simplified version of the specification of a published experiment 
 ([see\ ](#sec:case)). We describe each section of the ESF next.
+
+## Experiment Goals {#sec:goals}
+
+The first elements in the ESF specify the experimental goal (lines 
+2-8) and link it with one or more experiments that appear in the 
+article that serve to accomplish the goal.
+
+## Means of an Experiment {#sec:means}
+
+While computational systems are complex, advances in version-control 
+and cloud computing technologies reduce the burden of recreating the 
+environment on which an experiment runs. Immutability makes it easier 
+to fix a large majority of the components of an experiment as well as 
+infer and package its dependencies [@chirigati_reprozip_2013]. For 
+those components that cannot be fixed to a particular state, tools can 
+automatically obtain and format detailed information about the state 
+of the execution platform, making it easier to compare between 
+original and re-execution environments. The challenge lies in finding, 
+when present, the root cause(s) of the differences in original and 
+reproduced results [@jimenez_redo_2014].
+
+The ESF contains a section to specify the means of the experiment. In 
+the example, this corresponds to lines 13-36. This is a simplified 
+list of dependencies for this experiment, used only to illustrate the 
+type of information that is captured in this section. A real example 
+would be more comprehensive, potentially relying on tools that obtain 
+this information automatically[.](https://github.com/sosreport/sos)
+
+## Schema of Raw Data {#sec:schema}
+
+While it is important to capture the output data, making it part of 
+the ESF would be cumbersome and, as has been mentioned, exact 
+numerical repeatability is a very limited validation criterion. 
+Instead, it is preferable to have a description of the metrics being 
+captured, i.e., the metadata of the experiment's output. For example, 
+if the measurements are stored in a CSV file, the experiment 
+specification should include the metadata of each column such as name, 
+aliases, types, scales and ranges.
 
 ~~~{.json .numberLines}
 {
@@ -255,44 +276,6 @@ simplified version of the specification of a published experiment
         expect ceph >= (raw * 0.9)"
 ]}]}
 ~~~
-
-## Experiment Goals {#sec:goals}
-
-The first elements in the ESF specify the experimental goal (lines 
-2-8) and link it with one or more experiments that appear in the 
-article that serve to accomplish the goal.
-
-## Means of an Experiment {#sec:means}
-
-While computational systems are complex, advances in version-control 
-and cloud computing technologies reduce the burden of recreating the 
-environment on which an experiment runs. Immutability makes it easier 
-to fix a large majority of the components of an experiment as well as 
-infer and package its dependencies [@chirigati_reprozip_2013]. For 
-those components that cannot be fixed to a particular state, tools can 
-automatically obtain and format detailed information about the state 
-of the execution platform, making it easier to compare between 
-original and re-execution environments. The challenge lies in finding, 
-when present, the root cause(s) of the differences in original and 
-reproduced results [@jimenez_redo_2014].
-
-The ESF contains a section to specify the means of the experiment. In 
-the example, this corresponds to lines 13-36. This is a simplified 
-list of dependencies for this experiment, used only to illustrate the 
-type of information that is captured in this section. A real example 
-would be more comprehensive, potentially relying on tools that obtain 
-this information automatically[.](https://github.com/sosreport/sos)
-
-## Schema of Raw Data {#sec:schema}
-
-While it is important to capture the output data, making it part of 
-the ESF would be cumbersome and, as has been mentioned, exact 
-numerical repeatability is a very limited validation criterion. 
-Instead, it is preferable to have a description of the metrics being 
-captured, i.e., the metadata of the experiment's output. For example, 
-if the measurements are stored in a CSV file, the experiment 
-specification should include the metadata of each column such as name, 
-aliases, types, scales and ranges.
 
 The ESF has two entries for independent and dependent variables that 
 are used to specify the schema of the output data (lines 37-49). The 
@@ -443,15 +426,10 @@ for this experiment would be:
   when   not network_saturated
 ```
 
-The value of `network_saturated` should come from measures, at 
-runtime, about the network. For example, some switches implement. This 
-illustrates the relationship between validations and metrics: in order 
-to validate a claim about an aspect of a system, properly capturing 
-metrics that sustain the claims is of great importance.
-**TODO**: complete this with the stuff I came up with in the email 
-thread.
-
-**TODO2**: address other comments from reviewers.
+The boolean value for `network_saturated` should come from network 
+metrics that are captured at runtime. For example, some switches 
+implement the SNMP protocol that allows to identify if the network is 
+getting saturated.
 
 To evaluate the feasibility of this particular validation, we 
 recreated the original environment using the means specified in the 
@@ -519,25 +497,14 @@ descriptive language design, validation ranges have to be provided for
 each observation so that it can be tested. This has the implication of 
 turning observations into falsifiable statements [@popper_logic_2002]. 
 These validation clauses are conditions that should hold in order to 
-corroborate the conclusions of the paper. In other words, if the means 
-of the experiment are properly recreated, the specified behavior 
-should be observed.
-
-Experiment goals ([](#sec:goals)) set the tone in which these 
-falsifiable statements are treated. For an experiment that proves a 
-concept or design, a validation clause has more weight than, say, an 
-experiment that quantifies an expected overhead. For example, for a 
-system that claims to achieve linear scalability, the corresponding 
-validation clauses are more significant than those for an experiment 
-that shows the overhead of a new file system implemented as a FUSE 
-module. In the former, a failed validation invalidates the whole work 
-while in the latter the failed test invalidates a minor aspect. In 
-other words, some experiments evaluate a high-level claim while others 
-refer to low-level aspects, hence the importance of looking at 
-experiment goals while looking at validations; goals set the mindset 
-of the reader or reviewer that validates the work whenever she 
-encounters failed validations. This is the main motivation for having 
-goals as an explicit entry on the ESF.
+corroborate the conclusions of the paper. Experiment goals 
+([](#sec:goals)) set the tone in which these falsifiable statements 
+are treated. For an experiment that proves a concept or design, a 
+validation clause has more weight than, say, an experiment that 
+quantifies an expected overhead. Goals set the mindset of the reader 
+or reviewer that validates the work whenever she encounters failed 
+validations. This is the main motivation for having goals as an 
+explicit entry on the ESF.
 
 ## The Validation Workflow {#sec:workflow}
 
@@ -549,43 +516,7 @@ the differences between the means of the original and reproduced
 experiment are significantly different, or the original claims cannot 
 be corroborated. Thus, before one can determine the latter, one has to 
 audit the differences between the means of experimentation and account 
-for all of them (Figure 4).
-
-![Validation workflow.](figures/workflow.png)
-
-## Early Feedback
-
-The following are quotes from authors that have kindly worked with us 
-by creating specifications for one or more of their published 
-experiments:
-
-> Author 1: _Writing an experiment specification makes you think 
-> clearly about the overall experiment design_.
-
-> Author 2: _The ESF provides a nice template for carrying out 
-> experiments_.
-
-> Author 3: _This approach helps to find meaningful baselines. 
-> Reporting raw numbers in figures and observations makes it harder to 
-> validate results. Specifying validation clauses respective to 
-> baselines and normalized values makes it easier to report 
-> reproducible results_.
-
-In general, we have noticed that the exercise of explicitly specifying 
-the validation criteria creates a feedback loop in an author's mind 
-that results in insightful ideas for experiment design, baseline 
-selection, and validation criteria. Additionally, the author's point 
-of view is explicitly expressed. Usually, figures contain more 
-information than necessary to back a claim. This might lead readers to 
-draw other conclusions. Lastly, every article has an implicit temporal 
-context associated to it that the reader has to keep in mind, for 
-example, the bottleneck at the time that an article was published 
-might be in storage (e.g., hard disk drives) while at other times they 
-might have moved to the network instead (e.g., because of the 
-availability of faster storage such as SSDs). A possibility would be 
-to create a community-maintained knowledge base that an author can 
-link the paper to so that a semantic context is available to the 
-reader.
+for all of them.
 
 # Related Work {#sec:related}
 
@@ -605,26 +536,9 @@ Recomputation Manifesto_ [@gent_recomputation_2013] and the _Software
 Sustainability Institute_ [@crouch_software_2013] have reproducibility 
 as a central part of their endeavour but leave performance as a 
 secondary problem. In systems research, performance _is_ the subject 
-of study, thus we need to look at it as a primary issue.
-
-In [@collberg_repeatability_2015] the authors took 601 articles 
-published in 13 top-tier systems research conferences and found that 
-32.3% of associated experiments are repeatable (under their definition 
-of _weak repeatability_). The authors did not validate the original 
-results. In our case, we are interested not only in being able to 
-rebuild and execute binaries (repeat/reproduce the execution) but also 
-in validating the original claims by testing falsifiable statements on 
-the output of the experiment.
-
-Krishnamurthi and Vitek [@krishnamurthi_real_2015] emphasize the 
-importance of repeatability and describe recent efforts by the systems 
-research community to encourage the submission of experiment artifacts 
-as assets associated to an article. We see our work as complementary 
-to these since an experiment specification could also be part of this 
-list of assets, making it easier to validate a re-generated result.
-
-The use of declarative specifications has been explored in the context 
-of cloud recovery testing [@gunawi_fate_2011], bug reproduction 
+of study, thus we need to look at it as a primary issue. The use of 
+declarative specifications has been explored in the context of cloud 
+recovery testing [@gunawi_fate_2011], bug reproduction 
 [@li_reprolite_2014] and cloud resource orchestration 
 [@liu_declarative_2011].
 
